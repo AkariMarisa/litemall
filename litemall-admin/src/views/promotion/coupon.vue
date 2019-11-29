@@ -129,8 +129,6 @@
         <el-form-item label="商品限制范围">
           <el-radio-group v-model="dataForm.goodsType">
             <el-radio-button :label="0">全场通用</el-radio-button>
-            <el-radio-button :label="1">指定分类</el-radio-button>
-            <el-radio-button :label="2">指定商品</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item v-show="dataForm.goodsType === 1">
