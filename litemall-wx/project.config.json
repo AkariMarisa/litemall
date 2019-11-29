@@ -227,6 +227,18 @@
 				},
 				{
 					"id": -1,
+					"name": "分享",
+					"pathName": "pages/share/share",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "成为代理",
+					"pathName": "pages/payvip/payvip",
+					"query": ""
+				},
+				{
+					"id": -1,
 					"name": "测试更新",
 					"pathName": "pages/index/index",
 					"query": ""

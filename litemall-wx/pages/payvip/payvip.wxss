@@ -1,0 +1,58 @@
+page {
+  background: #f4f4f4;
+  min-height: 100%;
+}
+
+.container {
+  background: #f4f4f4;
+  min-height: 100%;
+  padding-top: 30rpx;
+}
+
+.vip-list {
+  width: 750rpx;
+  height: 100%;
+  overflow: hidden;
+}
+
+.item {
+  position: relative;
+  height: 400rpx;
+  width: 700rpx;
+  background: linear-gradient(to right, #cfbc68, #eed277);
+  margin-bottom: 30rpx;
+  margin-left: 30rpx;
+  margin-right: 30rpx;
+  padding-top: 52rpx;
+}
+
+.content {
+  margin-top: 24rpx;
+  margin-left: 40rpx;
+  display: flex;
+  margin-right: 40rpx;
+  flex-direction: row;
+}
+
+.content .left {
+  flex: 1;
+}
+
+.discount {
+  font-size: 50rpx;
+  color: #b4282d;
+}
+
+.min {
+  color: #fff;
+}
+
+.content .right {
+  width: 400rpx;
+}
+
+.name {
+  font-size: 44rpx;
+  color: rgb(255, 255, 255);
+  margin-bottom: 14rpx;
+}

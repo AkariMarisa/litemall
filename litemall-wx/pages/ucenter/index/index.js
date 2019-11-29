@@ -196,9 +196,14 @@ Page({
       duration: 2000
     });
   },
-  aboutUs: function() {
+  payVIP: function() {
     wx.navigateTo({
-      url: '/pages/about/about'
+      url: '/pages/payvip/payvip'
+    });
+  },
+  share: function () {
+    wx.navigateTo({
+      url: '/pages/share/share'
     });
   },
   goHelp: function () {

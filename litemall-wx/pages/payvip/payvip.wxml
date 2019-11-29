@@ -1,0 +1,27 @@
+<view class="container">
+  <scroll-view class="vip-list" scroll-y="true" scroll-top="{{scrollTop}}">
+
+    <view class="item" bindtap="getVIP1">
+      <view class="content">
+        <view class="left">
+          <view class="discount">50元</view>
+          <view class="min">低级介绍</view>
+        </view>
+        <view class="right">
+          <view class="name">低级代理</view>
+        </view>
+      </view>
+    </view>
+    <view class="item" bindtap="getVIP2">
+      <view class="content">
+        <view class="left">
+          <view class="discount">100元</view>
+          <view class="min">中级介绍</view>
+        </view>
+        <view class="right">
+          <view class="name">中级代理</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
