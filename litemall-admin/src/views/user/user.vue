@@ -31,12 +31,24 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="代理等级" prop="agentLevel">
+        <template slot-scope="scope">
+          <el-tag >{{ agentDic[scope.row.agentLevel] }}</el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="状态" prop="status">
         <template slot-scope="scope">
           <el-tag>{{ statusDic[scope.row.status] }}</el-tag>
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="操作" width="200" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button v-permission="['POST /admin/user/agent']" type="primary" size="small" @click="handleBecomeAgent(scope.row)" v-if="scope.row.agentLevel===0">成为高级代理</el-button>
+          <el-button v-permission="['DELETE /admin/user/agent']" type="danger" size="small" @click="handleRemoveAgent(scope.row)" v-if="scope.row.agentLevel===3&&scope.row.agentLevel!==0">解除高级代理</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -45,7 +57,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/user'
+import { fetchList, addAgent, deleteAgent } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -67,6 +79,7 @@ export default {
       downloadLoading: false,
       genderDic: ['未知', '男', '女'],
       levelDic: ['普通用户', 'VIP用户', '高级VIP用户'],
+      agentDic: ['未注册代理', '低级代理', '中级代理', '高级代理'],
       statusDic: ['可用', '禁用', '注销']
     }
   },
@@ -98,6 +111,38 @@ export default {
         excel.export_json_to_excel2(tHeader, this.list, filterVal, '用户信息')
         this.downloadLoading = false
       })
+    },
+    handleBecomeAgent(row) {
+      addAgent(row)
+        .then(response => {
+          this.getList()
+          this.$notify.success({
+            title: '成功',
+            message: '添加成功'
+          })
+        })
+        .catch(response => {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.errmsg
+          })
+        })
+    },
+    handleRemoveAgent(row) {
+      deleteAgent(row)
+        .then(response => {
+          this.getList()
+          this.$notify.success({
+            title: '成功',
+            message: '删除成功'
+          })
+        })
+        .catch(response => {
+          this.$notify.error({
+            title: '失败',
+            message: response.data.errmsg
+          })
+        })
     }
   }
 }

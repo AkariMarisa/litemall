@@ -196,6 +196,11 @@ Page({
       duration: 2000
     });
   },
+  // aboutUs: function() {
+  //   wx.navigateTo({
+  //     url: '/pages/about/about'
+  //   });
+  // },
   payVIP: function() {
     wx.navigateTo({
       url: '/pages/payvip/payvip'

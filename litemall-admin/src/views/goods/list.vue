@@ -38,16 +38,12 @@
             <el-form-item label="品牌商ID">
               <span>{{ props.row.brandId }}</span>
             </el-form-item>
-            <el-form-item label="商品ID">
-              <span>{{ props.row.id }}</span>
-            </el-form-item>
+
           </el-form>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="商品ID" prop="id" />
-
-      <el-table-column align="center" label="商品编号" prop="goodsSn" />
 
       <el-table-column align="center" min-width="100" label="名称" prop="name" />
 

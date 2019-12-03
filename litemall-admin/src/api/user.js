@@ -8,6 +8,22 @@ export function fetchList(query) {
   })
 }
 
+export function addAgent(query) {
+  return request({
+    url: '/user/agent',
+    method: 'post',
+    params: query
+  })
+}
+
+export function deleteAgent(query) {
+  return request({
+    url: '/user/agent',
+    method: 'delete',
+    params: query
+  })
+}
+
 export function listAddress(query) {
   return request({
     url: '/address/list',

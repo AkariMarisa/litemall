@@ -104,7 +104,7 @@ public class WxAuthController {
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
-        result.put("agentLevel", null == user.getAgentLevel() ? -1 : user.getAgentLevel());
+        result.put("agentLevel", user.getAgentLevel());
         return ResponseUtil.ok(result);
     }
 
@@ -151,6 +151,7 @@ public class WxAuthController {
             user.setLastLoginTime(LocalDateTime.now());
             user.setLastLoginIp(IpUtil.getIpAddr(request));
             user.setSessionKey(sessionKey);
+            user.setAgentLevel(0);
 
             userService.add(user);
 
@@ -171,7 +172,7 @@ public class WxAuthController {
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
-        result.put("agentLevel", null == user.getAgentLevel() ? -1 : user.getAgentLevel());
+        result.put("agentLevel", user.getAgentLevel());
         return ResponseUtil.ok(result);
     }
 
@@ -308,6 +309,7 @@ public class WxAuthController {
         user.setStatus((byte) 0);
         user.setLastLoginTime(LocalDateTime.now());
         user.setLastLoginIp(IpUtil.getIpAddr(request));
+        user.setAgentLevel(0);
         userService.add(user);
 
         // 给新用户发送注册优惠券
@@ -320,7 +322,7 @@ public class WxAuthController {
 
         // token
         String token = UserTokenManager.generateToken(user.getId());
-
+        
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
