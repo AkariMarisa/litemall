@@ -104,6 +104,7 @@ public class WxAuthController {
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
+        result.put("agentLevel", null == user.getAgentLevel() ? -1 : user.getAgentLevel());
         return ResponseUtil.ok(result);
     }
 
@@ -170,6 +171,7 @@ public class WxAuthController {
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
+        result.put("agentLevel", null == user.getAgentLevel() ? -1 : user.getAgentLevel());
         return ResponseUtil.ok(result);
     }
 
@@ -318,7 +320,7 @@ public class WxAuthController {
 
         // token
         String token = UserTokenManager.generateToken(user.getId());
-        
+
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
         result.put("userInfo", userInfo);
