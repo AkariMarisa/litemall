@@ -204,8 +204,11 @@ public class WxCartController {
 
         //判断商品是否可以购买
         LitemallGoods goods = goodsService.findById(goodsId);
-        if (goods == null || !goods.getIsOnSale()) {
-            return ResponseUtil.fail(GOODS_UNSHELVE, "商品已下架");
+        // AkariMarisa 代理券不需要处理
+        if (!goodsId.equals(1181006) && !goodsId.equals(1181007)) {
+            if (goods == null || !goods.getIsOnSale()) {
+                return ResponseUtil.fail(GOODS_UNSHELVE, "商品已下架");
+            }
         }
 
         LitemallGoodsProduct product = productService.findById(productId);

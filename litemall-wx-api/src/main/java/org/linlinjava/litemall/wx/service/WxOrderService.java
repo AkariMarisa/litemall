@@ -259,6 +259,8 @@ public class WxOrderService {
         String message = JacksonUtil.parseString(body, "message");
         Integer grouponRulesId = JacksonUtil.parseInteger(body, "grouponRulesId");
         Integer grouponLinkId = JacksonUtil.parseInteger(body, "grouponLinkId");
+        // AkariMarisa 需要添加一个标识，来区分虚拟商品和实物商品，虚拟商品不需要收获地址。
+        Boolean isVirtualGoods = JacksonUtil.parseBoolean(body, "isVirtualGoods");
 
         //如果是团购项目,验证活动是否有效
         if (grouponRulesId != null && grouponRulesId > 0) {
@@ -278,8 +280,9 @@ public class WxOrderService {
         }
 
         // 收货地址
+        // AkariMarisa 这里如果是虚拟商品的话，是不需要上传addressId的
         LitemallAddress checkedAddress = addressService.query(userId, addressId);
-        if (checkedAddress == null) {
+        if (!isVirtualGoods && checkedAddress == null) {
             return ResponseUtil.badArgument();
         }
 
@@ -326,9 +329,12 @@ public class WxOrderService {
 
 
         // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
+        // AkariMarisa 虚拟商品不需要计算运费
         BigDecimal freightPrice = new BigDecimal(0.00);
-        if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
-            freightPrice = SystemConfig.getFreight();
+        if (!isVirtualGoods) {
+            if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
+                freightPrice = SystemConfig.getFreight();
+            }
         }
 
         // 可以使用的其他钱，例如用户积分
