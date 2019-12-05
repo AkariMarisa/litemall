@@ -1,12 +1,15 @@
 package org.linlinjava.litemall.wx.service;
 
+import io.swagger.models.auth.In;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.util.JacksonUtil;
 import org.linlinjava.litemall.core.util.ResponseUtil;
+import org.linlinjava.litemall.db.domain.LitemallLackeys;
 import org.linlinjava.litemall.db.domain.LitemallOrder;
 import org.linlinjava.litemall.db.domain.LitemallOrderGoods;
 import org.linlinjava.litemall.db.domain.LitemallUser;
+import org.linlinjava.litemall.db.service.LitemallLackeysService;
 import org.linlinjava.litemall.db.service.LitemallOrderGoodsService;
 import org.linlinjava.litemall.db.service.LitemallOrderService;
 import org.linlinjava.litemall.db.service.LitemallUserService;
@@ -14,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 代理服务
@@ -28,6 +34,8 @@ public class WxAgentService {
     private LitemallOrderService orderService;
     @Autowired
     private LitemallOrderGoodsService orderGoodsService;
+    @Autowired
+    private LitemallLackeysService lackeysService;
 
     /**
      * 确认用户购买的代理
@@ -79,5 +87,22 @@ public class WxAgentService {
         userService.updateById(user);
 
         return ResponseUtil.ok();
+    }
+
+    public Object list(Integer userId){
+        if (userId == null) {
+            return ResponseUtil.unlogin();
+        }
+        List<LitemallLackeys> lackeysList = lackeysService.list(userId);
+        List<Map<String, Object>> result = new ArrayList<>(lackeysList.size());
+        for (LitemallLackeys lackeys : lackeysList) {
+            Integer lackeyUserId = lackeys.getLackeyUserId();
+            LitemallUser lackeyUser = userService.findById(lackeyUserId);
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("name", lackeyUser.getNickname());
+            userInfo.put("picUrl", lackeyUser.getAvatar());
+            result.add(userInfo);
+        }
+        return ResponseUtil.ok(result);
     }
 }

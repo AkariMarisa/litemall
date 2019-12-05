@@ -105,6 +105,7 @@ public class WxAuthController {
         result.put("token", token);
         result.put("userInfo", userInfo);
         result.put("agentLevel", user.getAgentLevel());
+        result.put("userId",user.getId());
         return ResponseUtil.ok(result);
     }
 
@@ -187,6 +188,7 @@ public class WxAuthController {
         result.put("token", token);
         result.put("userInfo", userInfo);
         result.put("agentLevel", user.getAgentLevel());
+        result.put("userId",user.getId());
         return ResponseUtil.ok(result);
     }
 
