@@ -109,6 +109,8 @@ public class WxOrderService {
     private CouponVerifyService couponVerifyService;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private LitemallAgentOrderService agentOrderService;
 
     /**
      * 订单列表
@@ -129,8 +131,10 @@ public class WxOrderService {
             return ResponseUtil.unlogin();
         }
 
+        List<Integer> agentOrderIdList = agentOrderService.getOrderIdsByUserId(userId);
+
         List<Short> orderStatus = OrderUtil.orderStatus(showType);
-        List<LitemallOrder> orderList = orderService.queryByOrderStatus(userId, orderStatus, page, limit, sort, order);
+        List<LitemallOrder> orderList = orderService.queryByOrderStatusWithoutAgentOrders(userId, orderStatus, agentOrderIdList, page, limit, sort, order);
 
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
         for (LitemallOrder o : orderList) {
@@ -260,7 +264,7 @@ public class WxOrderService {
         Integer grouponRulesId = JacksonUtil.parseInteger(body, "grouponRulesId");
         Integer grouponLinkId = JacksonUtil.parseInteger(body, "grouponLinkId");
         // AkariMarisa 需要添加一个标识，来区分虚拟商品和实物商品，虚拟商品不需要收获地址。
-        boolean isVirtualGoods = JacksonUtil.parseBoolean(body, "isVirtualGoods");
+        Boolean isVirtualGoods = JacksonUtil.parseBoolean(body, "isVirtualGoods");
 
         //如果是团购项目,验证活动是否有效
         if (grouponRulesId != null && grouponRulesId > 0) {
@@ -282,7 +286,7 @@ public class WxOrderService {
         // 收货地址
         // AkariMarisa 这里如果是虚拟商品的话，是不需要上传addressId的
         LitemallAddress checkedAddress = addressService.query(userId, addressId);
-        if (!isVirtualGoods && checkedAddress == null) {
+        if (isVirtualGoods == null && checkedAddress == null) {
             return ResponseUtil.badArgument();
         }
 
@@ -331,7 +335,7 @@ public class WxOrderService {
         // 根据订单商品总价计算运费，满足条件（例如88元）则免运费，否则需要支付运费（例如8元）；
         // AkariMarisa 虚拟商品不需要计算运费
         BigDecimal freightPrice = new BigDecimal(0.00);
-        if (!isVirtualGoods) {
+        if (isVirtualGoods == null) {
             if (checkedGoodsPrice.compareTo(SystemConfig.getFreightLimit()) < 0) {
                 freightPrice = SystemConfig.getFreight();
             }
@@ -374,6 +378,14 @@ public class WxOrderService {
         // 添加订单表项
         orderService.add(order);
         orderId = order.getId();
+
+        // 保存代理购买订单
+        if (isVirtualGoods != null && isVirtualGoods) {
+            LitemallAgentOrder agentOrder = new LitemallAgentOrder();
+            agentOrder.setOrderId(orderId);
+            agentOrder.setUserId(userId);
+            agentOrderService.add(agentOrder);
+        }
 
         // 添加订单商品表项
         for (LitemallCart cartGoods : checkedGoodsList) {
@@ -703,7 +715,14 @@ public class WxOrderService {
 
         order.setPayId(payId);
         order.setPayTime(LocalDateTime.now());
-        order.setOrderStatus(OrderUtil.STATUS_PAY);
+        LitemallAgentOrder agentOrder = agentOrderService.findByOrderId(order.getId());
+        Short orderStatus;
+        if (agentOrder != null) {
+            orderStatus = OrderUtil.STATUS_SHIP;
+        } else {
+            orderStatus = OrderUtil.STATUS_PAY;
+        }
+        order.setOrderStatus(orderStatus);
         if (orderService.updateWithOptimisticLocker(order) == 0) {
             // 这里可能存在这样一个问题，用户支付和系统自动取消订单发生在同时
             // 如果数据库首先因为系统自动取消订单而更新了订单状态；
@@ -714,7 +733,7 @@ public class WxOrderService {
             if (OrderUtil.isAutoCancelStatus(order)) {
                 order.setPayId(payId);
                 order.setPayTime(LocalDateTime.now());
-                order.setOrderStatus(OrderUtil.STATUS_PAY);
+                order.setOrderStatus(orderStatus);
                 updated = orderService.updateWithOptimisticLocker(order);
             }
 

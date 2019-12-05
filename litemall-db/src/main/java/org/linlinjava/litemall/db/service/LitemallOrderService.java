@@ -86,6 +86,24 @@ public class LitemallOrderService {
         return litemallOrderMapper.selectByExample(example);
     }
 
+    public List<LitemallOrder> queryByOrderStatusWithoutAgentOrders(Integer userId, List<Short> orderStatus, List<Integer> agentOrderIds, Integer page, Integer limit, String sort, String order) {
+        LitemallOrderExample example = new LitemallOrderExample();
+        example.setOrderByClause(LitemallOrder.Column.addTime.desc());
+        LitemallOrderExample.Criteria criteria = example.or();
+        criteria.andUserIdEqualTo(userId);
+        criteria.andIdNotIn(agentOrderIds);
+        if (orderStatus != null) {
+            criteria.andOrderStatusIn(orderStatus);
+        }
+        criteria.andDeletedEqualTo(false);
+        if (!StringUtils.isEmpty(sort) && !StringUtils.isEmpty(order)) {
+            example.setOrderByClause(sort + " " + order);
+        }
+
+        PageHelper.startPage(page, limit);
+        return litemallOrderMapper.selectByExample(example);
+    }
+
     public List<LitemallOrder> querySelective(Integer userId, String orderSn, List<Short> orderStatusArray, Integer page, Integer limit, String sort, String order) {
         LitemallOrderExample example = new LitemallOrderExample();
         LitemallOrderExample.Criteria criteria = example.createCriteria();
