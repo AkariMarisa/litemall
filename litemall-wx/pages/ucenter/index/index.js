@@ -5,6 +5,7 @@ var app = getApp();
 
 Page({
   data: {
+    agentLevel: 0,
     userInfo: {
       nickName: '点击登录',
       avatarUrl: 'http://yanxuan.nosdn.127.net/8945ae63d940cc42406c3f67019c5cb6.png'
@@ -27,10 +28,14 @@ Page({
 
     //获取用户的登录信息
     if (app.globalData.hasLogin) {
+      
       let userInfo = wx.getStorageSync('userInfo');
       this.setData({
         userInfo: userInfo,
         hasLogin: true
+      });
+      this.setData({
+        agentLevel:1//wx.getStorageSync('agentLevel')
       });
 
       let that = this;
@@ -202,8 +207,18 @@ Page({
   //   });
   // },
   payVIP: function() {
+    if (!app.globalData.hasLogin) {
+      wx.navigateTo({
+        url: "/pages/auth/login/login"
+      });
+    }
     wx.navigateTo({
       url: '/pages/payvip/payvip'
+    });
+  },
+  vips: function () {
+    wx.navigateTo({
+      url: '/pages/vips/vips'
     });
   },
   share: function () {

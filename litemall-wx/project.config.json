@@ -239,6 +239,12 @@
 				},
 				{
 					"id": -1,
+					"name": "我的团队",
+					"pathName": "pages/vips/vips",
+					"query": ""
+				},
+				{
+					"id": -1,
 					"name": "测试更新",
 					"pathName": "pages/index/index",
 					"query": ""

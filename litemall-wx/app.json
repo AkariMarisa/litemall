@@ -34,6 +34,7 @@
     "pages/goods/goods",
     "pages/about/about",
     "pages/payvip/payvip",
+    "pages/vips/vips",
     "pages/share/share",
     "pages/groupon/myGroupon/myGroupon",
     "pages/groupon/grouponDetail/grouponDetail",
