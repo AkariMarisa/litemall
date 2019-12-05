@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="profile-info">
+    <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+    <view class="info">
+      <text class="name">{{userInfo.nickName}}</text>
+      <text class="level" wx:if="{{agentLevel==1}}">初级代理</text>
+      <text class="level" wx:if="{{agentLevel==2}}">中级代理</text>
+      <text class="level" wx:if="{{agentLevel==3}}">高级代理</text>
+    </view>
+    <view class="nubm">
+      <text class="nubms">团队人数</text>
+      <text class="nubms">{{nubm}}</text>
+    </view>
+  </view>
+</view>
