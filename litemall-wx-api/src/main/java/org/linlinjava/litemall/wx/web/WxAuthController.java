@@ -166,6 +166,8 @@ public class WxAuthController {
                 lackeys.setAgentUserId(inviterId);
                 lackeys.setLackeyUserId(user.getId());
                 lackeysService.add(lackeys);
+
+                couponAssignService.assignForInviter(inviterId);
             }
         } else {
             // 更新用户个性信息
@@ -339,6 +341,8 @@ public class WxAuthController {
             lackeys.setAgentUserId(inviterId);
             lackeys.setLackeyUserId(user.getId());
             lackeysService.add(lackeys);
+
+            couponAssignService.assignForInviter(inviterId);
         }
 
         // userInfo

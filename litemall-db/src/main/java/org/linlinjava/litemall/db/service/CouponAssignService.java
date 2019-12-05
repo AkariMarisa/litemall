@@ -57,4 +57,19 @@ public class CouponAssignService {
 
     }
 
+    /**
+     * 为邀请者添加优惠券
+     * @param inviterUserId 邀请者用户ID
+     */
+    public void assignForInviter(Integer inviterUserId) {
+        LitemallCouponUser couponUser = new LitemallCouponUser();
+        int couponId = 10;
+        couponUser.setCouponId(couponId);
+        couponUser.setUserId(inviterUserId);
+        LitemallCoupon coupon = couponService.findById(couponId);
+        couponUser.setStartTime(coupon.getStartTime());
+        couponUser.setEndTime(coupon.getEndTime());
+        couponUserService.add(couponUser);
+    }
+
 }
