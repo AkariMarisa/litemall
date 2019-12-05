@@ -241,7 +241,7 @@ public class WxOrderService {
      * 5. 如果是团购商品，则创建团购活动表项。
      *
      * @param userId 用户ID
-     * @param body   订单信息，{ cartId：xxx, addressId: xxx, couponId: xxx, message: xxx, grouponRulesId: xxx,  grouponLinkId: xxx}
+     * @param body   订单信息，{ cartId：xxx, addressId: xxx, couponId: xxx, message: xxx, grouponRulesId: xxx,  grouponLinkId: xxx, isVirtualGoods: true or false}
      * @return 提交订单操作结果
      */
     @Transactional
@@ -260,7 +260,7 @@ public class WxOrderService {
         Integer grouponRulesId = JacksonUtil.parseInteger(body, "grouponRulesId");
         Integer grouponLinkId = JacksonUtil.parseInteger(body, "grouponLinkId");
         // AkariMarisa 需要添加一个标识，来区分虚拟商品和实物商品，虚拟商品不需要收获地址。
-        Boolean isVirtualGoods = JacksonUtil.parseBoolean(body, "isVirtualGoods");
+        boolean isVirtualGoods = JacksonUtil.parseBoolean(body, "isVirtualGoods");
 
         //如果是团购项目,验证活动是否有效
         if (grouponRulesId != null && grouponRulesId > 0) {
@@ -352,10 +352,10 @@ public class WxOrderService {
         order.setUserId(userId);
         order.setOrderSn(orderService.generateOrderSn(userId));
         order.setOrderStatus(OrderUtil.STATUS_CREATE);
-        order.setConsignee(checkedAddress.getName());
-        order.setMobile(checkedAddress.getTel());
+        order.setConsignee(checkedAddress == null ? "test" : checkedAddress.getName());
+        order.setMobile(checkedAddress == null ? "110" : checkedAddress.getTel());
         order.setMessage(message);
-        String detailedAddress = checkedAddress.getProvince() + checkedAddress.getCity() + checkedAddress.getCounty() + " " + checkedAddress.getAddressDetail();
+        String detailedAddress = checkedAddress == null ? "test" : (checkedAddress.getProvince() + checkedAddress.getCity() + checkedAddress.getCounty() + " " + checkedAddress.getAddressDetail());
         order.setAddress(detailedAddress);
         order.setGoodsPrice(checkedGoodsPrice);
         order.setFreightPrice(freightPrice);

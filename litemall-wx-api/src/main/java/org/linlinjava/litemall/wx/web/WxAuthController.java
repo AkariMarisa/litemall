@@ -7,21 +7,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.notify.NotifyService;
 import org.linlinjava.litemall.core.notify.NotifyType;
-import org.linlinjava.litemall.core.util.CharUtil;
-import org.linlinjava.litemall.core.util.JacksonUtil;
-import org.linlinjava.litemall.core.util.RegexUtil;
-import org.linlinjava.litemall.core.util.ResponseUtil;
+import org.linlinjava.litemall.core.util.*;
 import org.linlinjava.litemall.core.util.bcrypt.BCryptPasswordEncoder;
+import org.linlinjava.litemall.db.domain.LitemallLackeys;
 import org.linlinjava.litemall.db.domain.LitemallUser;
 import org.linlinjava.litemall.db.service.CouponAssignService;
+import org.linlinjava.litemall.db.service.LitemallLackeysService;
 import org.linlinjava.litemall.db.service.LitemallUserService;
 import org.linlinjava.litemall.wx.annotation.LoginUser;
 import org.linlinjava.litemall.wx.dto.UserInfo;
-import org.linlinjava.litemall.wx.dto.UserToken;
 import org.linlinjava.litemall.wx.dto.WxLoginInfo;
 import org.linlinjava.litemall.wx.service.CaptchaCodeManager;
 import org.linlinjava.litemall.wx.service.UserTokenManager;
-import org.linlinjava.litemall.core.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -55,6 +52,9 @@ public class WxAuthController {
 
     @Autowired
     private CouponAssignService couponAssignService;
+
+    @Autowired
+    private LitemallLackeysService lackeysService;
 
     /**
      * 账号登录
@@ -111,7 +111,7 @@ public class WxAuthController {
     /**
      * 微信登录
      *
-     * @param wxLoginInfo 请求内容，{ code: xxx, userInfo: xxx }
+     * @param wxLoginInfo 请求内容，{ code: xxx, userInfo: xxx , inviterId: xxx}
      * @param request     请求对象
      * @return 登录结果
      */
@@ -157,7 +157,21 @@ public class WxAuthController {
 
             // 新用户发送注册优惠券
             couponAssignService.assignForRegister(user.getId());
+
+            // AkariMarisa 保存代理与下线的关系
+            Integer inviterId = wxLoginInfo.getInviterId();
+            if (inviterId != null) {
+                LitemallLackeys lackeys = new LitemallLackeys();
+                lackeys.setAgentUserId(inviterId);
+                lackeys.setLackeyUserId(user.getId());
+                lackeysService.add(lackeys);
+            }
         } else {
+            // 更新用户个性信息
+            user.setAvatar(userInfo.getAvatarUrl());
+            user.setNickname(userInfo.getNickName());
+            user.setGender(userInfo.getGender());
+
             user.setLastLoginTime(LocalDateTime.now());
             user.setLastLoginIp(IpUtil.getIpAddr(request));
             user.setSessionKey(sessionKey);
@@ -245,6 +259,8 @@ public class WxAuthController {
         // 如果是小程序注册，则必须非空
         // 其他情况，可以为空
         String wxCode = JacksonUtil.parseString(body, "wxCode");
+        // 邀请者ID，用于确定代理的下线
+        Integer inviterId = JacksonUtil.parseInteger(body, "inviterId");
 
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(mobile)
                 || StringUtils.isEmpty(code)) {
@@ -263,7 +279,7 @@ public class WxAuthController {
         if (!RegexUtil.isMobileExact(mobile)) {
             return ResponseUtil.fail(AUTH_INVALID_MOBILE, "手机号格式不正确");
         }
-        //判断验证码是否正确
+        // 判断验证码是否正确
         String cacheCode = CaptchaCodeManager.getCachedCaptcha(mobile);
         if (cacheCode == null || cacheCode.isEmpty() || !cacheCode.equals(code)) {
             return ResponseUtil.fail(AUTH_CAPTCHA_UNMATCH, "验证码错误");
@@ -314,6 +330,14 @@ public class WxAuthController {
 
         // 给新用户发送注册优惠券
         couponAssignService.assignForRegister(user.getId());
+
+        // AkariMarisa 保存代理与下线的关系
+        if (inviterId != null) {
+            LitemallLackeys lackeys = new LitemallLackeys();
+            lackeys.setAgentUserId(inviterId);
+            lackeys.setLackeyUserId(user.getId());
+            lackeysService.add(lackeys);
+        }
 
         // userInfo
         UserInfo userInfo = new UserInfo();
