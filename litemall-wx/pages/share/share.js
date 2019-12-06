@@ -8,8 +8,7 @@ Page({
     accesstoken: '',
     expiresin: '',
     userid: 0,
-    buff: '/static/images/rw.png',
-    buf:''
+    buff: '/static/images/rw.png'
   },
 
   onLoad: function() {
@@ -23,19 +22,15 @@ Page({
       appid: 'wx8f702282f2e1df6b',
       secret: 'a1355f11a818f47fcdfaefc73945d801',
     }, 'GET').then(function(res) {
+
+
       //获取二维码
       util.request(that.data.rurl + res.access_token, {
         scene: '' + that.data.userid,
-      }, 'POST' ).then(function(res) {
-        console.log(res)
+      }, 'POST' , 'other', 'arraybuffer').then(function(res) {
         that.setData({
-          buf:res,
           buff: "data:image/png;base64," + wx.arrayBufferToBase64(res)
         })
-      })
-      that.setData({
-        accesstoken: res.access_token,
-        expiresin: res.expires_in,
       })
     })
   }

@@ -22,12 +22,14 @@ function formatNumber(n) {
 /**
  * 封封微信的的request
  */
-function request(url, data = {}, method = "GET") {
+function request(url, data = {}, method = "GET", dataType = "json", responseType = "text") {
   return new Promise(function(resolve, reject) {
     wx.request({
       url: url,
       data: data,
       method: method,
+      dataType: dataType,
+      responseType: responseType,
       header: {
 
         // 'responseType': 'arraybuffer',
