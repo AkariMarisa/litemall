@@ -28,16 +28,11 @@ Page({
 
     //获取用户的登录信息
     if (app.globalData.hasLogin) {
-      
-      let userInfo = wx.getStorageSync('userInfo');
       this.setData({
-        userInfo: userInfo,
-        hasLogin: true
+        userInfo: wx.getStorageSync('userInfo'),
+        hasLogin: true,
+        agentLevel: wx.getStorageSync('agentLevel')
       });
-      this.setData({
-        agentLevel:wx.getStorageSync('agentLevel')
-      });
-
       let that = this;
       util.request(api.UserIndex).then(function(res) {
         if (res.errno === 0) {
@@ -216,21 +211,21 @@ Page({
       url: '/pages/payvip/payvip'
     });
   },
-  vips: function () {
+  vips: function() {
     wx.navigateTo({
       url: '/pages/vips/vips'
     });
   },
-  share: function () {
-    wx.navigateTo({
-      url: '/pages/share/share'
-    });
-  },
-  goHelp: function () {
+  // share: function () {
+  //   wx.navigateTo({
+  //     url: '/pages/share/share'
+  //   });
+  // },
+  goHelp: function() {
     wx.navigateTo({
       url: '/pages/help/help'
     });
-  },  
+  },
   exitLogin: function() {
     wx.showModal({
       title: '',

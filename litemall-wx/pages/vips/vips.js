@@ -17,21 +17,20 @@ Page({
   },
 
   onReady: function() {
-    
+
   },
 
   onShow: function() {
     //获取用户的登录信息
     this.setData({
       userInfo: wx.getStorageSync('userInfo'),
-      // userid: wx.getStorageSync('userId'),
-      agentLevel: 1 //wx.getStorageSync('agentLevel')
+      agentLevel: wx.getStorageSync('agentLevel'),
     });
     let that = this;
-    util.request(api.AgentList).then(function (res) {
+    util.request(api.AgentList).then(function(res) {
       if (res.errno === 0) {
         that.setData({
-          agentlist: res.data.agentlist
+          agentlist: res.data,
         });
       }
     });
@@ -48,7 +47,7 @@ Page({
       url: "/pages/share/share"
     });
     // let that = this;
-    
+
     // util.request(that.data.aturl, {
     //   grant_type: 'client_credential',
     //   appid: 'wx8f702282f2e1df6b',

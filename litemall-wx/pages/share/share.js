@@ -22,8 +22,6 @@ Page({
       appid: 'wx8f702282f2e1df6b',
       secret: 'a1355f11a818f47fcdfaefc73945d801',
     }, 'GET').then(function(res) {
-
-
       //获取二维码
       util.request(that.data.rurl + res.access_token, {
         scene: '@' + that.data.userid,
