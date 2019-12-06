@@ -59,6 +59,7 @@ Page({
           app.globalData.hasLogin = true;
           wx.setStorageSync('userInfo', res.data.data.userInfo);
           wx.setStorageSync('agentLevel', res.data.data.agentLevel);
+          wx.setStorageSync('userId', res.data.data.userId);
           wx.setStorage({
             key: "token",
             data: res.data.data.token,

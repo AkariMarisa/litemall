@@ -29,6 +29,8 @@ function request(url, data = {}, method = "GET") {
       data: data,
       method: method,
       header: {
+
+        // 'responseType': 'arraybuffer',
         'Content-Type': 'application/json',
         'X-Litemall-Token': wx.getStorageSync('token')
       },

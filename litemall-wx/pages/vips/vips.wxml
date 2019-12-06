@@ -9,7 +9,29 @@
     </view>
     <view class="nubm">
       <text class="nubms">团队人数</text>
-      <text class="nubms">{{nubm}}</text>
+      <text class="nubms">10000{{nubm}}</text>
+    </view>
+    <view class="user_column_item" bindtap='goShare'>
+      <image class='user_column_item_image' src='/static/images/share.png'></image>
+      <view class='user_column_item_text'>分享</view>
     </view>
   </view>
+
+  <view class="a-section a-popular">
+    <view class="h">
+          <text class="txt">我的团队</text>
+    </view>
+    <view class="b">
+      <view class="item" wx:for="{{agentlist}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+          <image class="img" src="{{item.picUrl}}" background-size="cover"></image>
+          <view class="right">
+            <view class="text">
+              <text class="name">{{item.name}}</text>
+            </view>
+          </view>
+      </view>
+    </view>
+  </view>
+
+  
 </view>

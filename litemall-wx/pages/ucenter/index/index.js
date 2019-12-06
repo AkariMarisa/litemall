@@ -35,7 +35,7 @@ Page({
         hasLogin: true
       });
       this.setData({
-        agentLevel:1//wx.getStorageSync('agentLevel')
+        agentLevel:1,//wx.getStorageSync('agentLevel')
       });
 
       let that = this;

@@ -16,6 +16,7 @@ module.exports = {
   CatalogCurrent: WxApiRoot + 'catalog/current', //分类目录当前分类数据接口
 
   AgentConfirm: WxApiRoot + 'agent/confirmBuy',//确认代理购买
+  AgentList: WxApiRoot + 'agent/list', //查看下线列表
 
   AuthLoginByWeixin: WxApiRoot + 'auth/login_by_weixin', //微信登录
   AuthLoginByAccount: WxApiRoot + 'auth/login', //账号登录

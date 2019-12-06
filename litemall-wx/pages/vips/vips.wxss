@@ -20,28 +20,29 @@ page {
   font-size: 28rpx;
 }
 
-.profile-nubm {
-  display: flex;
-  height: 30rpx;
-  line-height: 30rpx;
-  margin-bottom: 10rpx;
-  color: #ffee00;
-  font-size: 28rpx;
+.profile-info .nubm {
+  flex: 1;
+  height: 70rpx;
 }
 
-.profile-nubm .nubms {
+.profile-info .nubms {
   display: block;
-  height: 30rpx;
-  line-height: 30rpx;
-  margin-bottom: 10rpx;
-  color: #ffee00;
+  height: 45rpx;
+  line-height: 10rpx;
+  color: #fff;
   font-size: 28rpx;
+  margin-bottom: 10rpx;
 }
 
 .profile-info .avatar {
   height: 148rpx;
   width: 148rpx;
   border-radius: 50%;
+}
+
+.profile-info .share {
+  width: 80rpx;
+  height: 80rpx;
 }
 
 .profile-info .info {
@@ -66,4 +67,111 @@ page {
   margin-bottom: 10rpx;
   color: #ffee00;
   font-size: 45rpx;
+}
+
+.user_column_item {
+  width: 120rpx;
+  height: 120rpx;
+  background: #ab956d;
+  line-height: 35rpx;
+}
+
+.user_column_item_image {
+  margin-top: 15rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.user_column_item_text {
+  /* border: 1px solid black; */
+  font-size: 24rpx;
+  color: rgb(105, 105, 105);
+}
+
+.a-section {
+  width: auto;
+  height: auto;
+  overflow: hidden;
+  background: #fff;
+  color: #333;
+  margin-top: 20rpx;
+}
+
+.a-section .h {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  height: 100rpx;
+}
+
+.a-section .h .txt {
+  padding-right: 30rpx;
+  background-size: 16.656rpx 27rpx;
+  display: inline-block;
+  height: 36rpx;
+  font-size: 33rpx;
+  line-height: 36rpx;
+}
+.a-popular {
+  width: auto;
+  height: auto;
+  overflow: hidden;
+}
+
+.a-popular .b .item {
+  border-top: 1px solid #d9d9d9;
+  margin: 0 20rpx;
+  height: 264rpx;
+  width: 710rpx;
+}
+
+.a-popular .b .img {
+  margin-top: 12rpx;
+  margin-right: 12rpx;
+  float: left;
+  width: 240rpx;
+  height: 240rpx;
+}
+
+.a-popular .b .right {
+  float: left;
+  height: 264rpx;
+  width: 456rpx;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.a-popular .b .text {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  height: 264rpx;
+  width: 456rpx;
+}
+
+.a-popular .b .name {
+  width: 456rpx;
+  display: block;
+  color: #333;
+  line-height: 50rpx;
+  font-size: 30rpx;
+}
+
+.a-popular .b .desc {
+  width: 456rpx;
+  display: block;
+  color: #999;
+  line-height: 50rpx;
+  font-size: 25rpx;
+}
+
+.a-popular .b .price {
+  width: 456rpx;
+  display: block;
+  color: #ab956d;
+  line-height: 50rpx;
+  font-size: 33rpx;
 }
