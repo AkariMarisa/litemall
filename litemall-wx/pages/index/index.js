@@ -51,7 +51,7 @@ Page({
         });
       }
     });
-    util.request(api.GoodsCount).then(function (res) {
+    util.request(api.GoodsCount).then(function(res) {
       that.setData({
         goodsCount: res.data
       });
@@ -63,9 +63,8 @@ Page({
       //这个scene的值存在则证明首页的开启来源于朋友圈分享的图,同时可以通过获取到的goodId的值跳转导航到对应的详情页
       var scene = decodeURIComponent(options.scene);
       console.log("scene:" + scene);
-
       if (scene.startsWith('@')) {
-          // 针对邀请注册进行处理
+        // 针对邀请注册进行处理
         wx.setStorageSync('inviterId', scene.slice(1))
       } else {
         let info_arr = [];
@@ -142,8 +141,7 @@ Page({
         wx.showToast({
           title: "领取成功"
         })
-      }
-      else{
+      } else {
         util.showErrorToast(res.errmsg);
       }
     })

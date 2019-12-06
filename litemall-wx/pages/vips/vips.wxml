@@ -9,7 +9,7 @@
     </view>
     <view class="nubm">
       <text class="nubms">团队人数</text>
-      <text class="nubms">10000{{nubm}}</text>
+      <text class="nubms">{{nubm}}</text>
     </view>
     <view class="user_column_item" bindtap='goShare'>
       <image class='user_column_item_image' src='/static/images/share.png'></image>
