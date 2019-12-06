@@ -26,7 +26,8 @@ Page({
 
       //获取二维码
       util.request(that.data.rurl + res.access_token, {
-        scene: '' + that.data.userid,
+        scene: '@' + that.data.userid,
+        width:1280,
       }, 'POST' , 'other', 'arraybuffer').then(function(res) {
         that.setData({
           buff: "data:image/png;base64," + wx.arrayBufferToBase64(res)

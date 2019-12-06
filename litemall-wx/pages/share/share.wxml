@@ -1,8 +1,6 @@
 <!--index.wxml-->
 <view class="container page">
   <view class="panel">
-    <view class="qrcode">
-      <image src="{{buff}}"></image>
-    </view>
+    <image class="qrcode" src="{{buff}}"></image>
   </view>
 </view>

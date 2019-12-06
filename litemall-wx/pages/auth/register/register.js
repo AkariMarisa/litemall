@@ -86,7 +86,8 @@ Page({
         password: that.data.password,
         mobile: that.data.mobile,
         code: that.data.code,
-        wxCode: wxCode
+        wxCode: wxCode,
+        inviterId: wx.getStorageSync('inviterId')
       },
       method: 'POST',
       header: {
