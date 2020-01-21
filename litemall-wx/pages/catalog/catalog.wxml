@@ -6,9 +6,9 @@
     </navigator>
   </view>
   <view class="catalog">
-    <scroll-view class="nav" scroll-y="true">
+    <!-- <scroll-view class="nav" scroll-y="true">
       <view class="item {{ currentCategory.id == item.id ? 'active' : ''}}" wx:for="{{categoryList}}" wx:key="id" data-id="{{item.id}}" data-index="{{index}}" bindtap="switchCate">{{item.name}}</view>
-    </scroll-view>
+    </scroll-view> -->
     <scroll-view class="cate" scroll-y="true">
       <navigator url="url" class="banner">
         <image class="image" src="{{currentCategory.picUrl}}"></image>
@@ -16,7 +16,8 @@
       </navigator>
       <view class="hd">
         <text class="line"></text>
-        <text class="txt">{{currentCategory.name}}分类</text>
+        <!-- <text class="txt">{{currentCategory.name}}分类</text> -->
+        <text class="txt">全部分类</text>
         <text class="line"></text>
       </view>
       <view class="bd">
