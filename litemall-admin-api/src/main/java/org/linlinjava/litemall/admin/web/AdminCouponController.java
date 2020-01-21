@@ -56,6 +56,12 @@ public class AdminCouponController {
         return ResponseUtil.okList(couponList);
     }
 
+    @GetMapping("/listlabel")
+    public Object listCouponLabel() {
+        List<LitemallCoupon> couponList = couponService.queryAll();
+        return ResponseUtil.okList(couponList);
+    }
+
     private Object validate(LitemallCoupon coupon) {
         String name = coupon.getName();
         if (StringUtils.isEmpty(name)) {

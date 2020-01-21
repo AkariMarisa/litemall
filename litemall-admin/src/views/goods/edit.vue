@@ -23,6 +23,21 @@
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
+        <el-form-item label="购买后返给用户的优惠券" prop="returnCoupon">
+          <el-select v-model="goods.coupon" placeholder="请选择">
+            <el-option
+              v-for="item in coupons"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="券后最低价" prop="couponPrice">
+          <el-input v-model="goods.couponPrice" placeholder="0.00">
+            <template slot="append">元</template>
+          </el-input>
+        </el-form-item>
         <el-form-item label="是否新品" prop="isNew">
           <el-radio-group v-model="goods.isNew">
             <el-radio :label="true">新品</el-radio>
@@ -297,6 +312,7 @@
 
 <script>
 import { detailGoods, editGoods, listCatAndBrand } from '@/api/goods'
+import { listCouponLabel } from '@/api/coupon'
 import { createStorage, uploadPath } from '@/api/storage'
 import Editor from '@tinymce/tinymce-vue'
 import { MessageBox } from 'element-ui'
@@ -315,6 +331,7 @@ export default {
       categoryList: [],
       brandList: [],
       categoryIds: [],
+      coupons: [],
       goods: { gallery: [] },
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
@@ -335,7 +352,8 @@ export default {
       attributeForm: { attribute: '', value: '' },
       attributes: [],
       rules: {
-        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '商品名称不能为空', trigger: 'blur' }],
+        couponPrice: [{ required: true, message: '券后价不能为空', trigger: 'blur' }]
       },
       editorInit: {
         language: 'zh_CN',
@@ -418,6 +436,9 @@ export default {
       listCatAndBrand().then(response => {
         this.categoryList = response.data.data.categoryList
         this.brandList = response.data.data.brandList
+      })
+      listCouponLabel().then(response => {
+        this.coupons = response.data.data.list
       })
     },
     handleCategoryChange(value) {

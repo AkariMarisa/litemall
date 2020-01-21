@@ -68,8 +68,7 @@ public class WxCartController {
             if (goods == null || !goods.getIsOnSale()) {
                 cartService.deleteById(cart.getId());
                 logger.debug("系统自动删除失效购物车商品 goodsId=" + cart.getGoodsId() + " productId=" + cart.getProductId());
-            }
-            else{
+            } else {
                 cartList.add(cart);
             }
         }
@@ -124,7 +123,7 @@ public class WxCartController {
         if (!ObjectUtils.allNotNull(productId, number, goodsId)) {
             return ResponseUtil.badArgument();
         }
-        if(number <= 0){
+        if (number <= 0) {
             return ResponseUtil.badArgument();
         }
 
@@ -146,10 +145,9 @@ public class WxCartController {
             cart.setId(null);
             cart.setGoodsSn(goods.getGoodsSn());
             cart.setGoodsName((goods.getName()));
-            if(StringUtils.isEmpty(product.getUrl())){
+            if (StringUtils.isEmpty(product.getUrl())) {
                 cart.setPicUrl(goods.getPicUrl());
-            }
-            else{
+            } else {
                 cart.setPicUrl(product.getUrl());
             }
             cart.setPrice(product.getPrice());
@@ -198,7 +196,7 @@ public class WxCartController {
         if (!ObjectUtils.allNotNull(productId, number, goodsId)) {
             return ResponseUtil.badArgument();
         }
-        if(number <= 0){
+        if (number <= 0) {
             return ResponseUtil.badArgument();
         }
 
@@ -223,10 +221,9 @@ public class WxCartController {
             cart.setId(null);
             cart.setGoodsSn(goods.getGoodsSn());
             cart.setGoodsName((goods.getName()));
-            if(StringUtils.isEmpty(product.getUrl())){
+            if (StringUtils.isEmpty(product.getUrl())) {
                 cart.setPicUrl(goods.getPicUrl());
-            }
-            else{
+            } else {
                 cart.setPicUrl(product.getUrl());
             }
             cart.setPrice(product.getPrice());
@@ -271,7 +268,7 @@ public class WxCartController {
         if (!ObjectUtils.allNotNull(id, productId, number, goodsId)) {
             return ResponseUtil.badArgument();
         }
-        if(number <= 0){
+        if (number <= 0) {
             return ResponseUtil.badArgument();
         }
 
@@ -458,13 +455,13 @@ public class WxCartController {
             checkedGoodsList = new ArrayList<>(1);
             checkedGoodsList.add(cart);
         }
-        BigDecimal checkedGoodsPrice = new BigDecimal(0.00);
+        BigDecimal allGoodsPrice = new BigDecimal(0.00);
         for (LitemallCart cart : checkedGoodsList) {
             //  只有当团购规格商品ID符合才进行团购优惠
             if (grouponRules != null && grouponRules.getGoodsId().equals(cart.getGoodsId())) {
-                checkedGoodsPrice = checkedGoodsPrice.add(cart.getPrice().subtract(grouponPrice).multiply(new BigDecimal(cart.getNumber())));
+                allGoodsPrice = allGoodsPrice.add(cart.getPrice().subtract(grouponPrice).multiply(new BigDecimal(cart.getNumber())));
             } else {
-                checkedGoodsPrice = checkedGoodsPrice.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
+                allGoodsPrice = allGoodsPrice.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
             }
         }
 
@@ -474,15 +471,15 @@ public class WxCartController {
         Integer tmpUserCouponId = 0;
         int tmpCouponLength = 0;
         List<LitemallCouponUser> couponUserList = couponUserService.queryAll(userId);
-        for(LitemallCouponUser couponUser : couponUserList){
+        for (LitemallCouponUser couponUser : couponUserList) {
             tmpUserCouponId = couponUser.getId();
-            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponUser.getCouponId(), tmpUserCouponId, checkedGoodsPrice);
-            if(coupon == null){
+            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponUser.getCouponId(), tmpUserCouponId, allGoodsPrice);
+            if (coupon == null) {
                 continue;
             }
 
             tmpCouponLength++;
-            if(tmpCouponPrice.compareTo(coupon.getDiscount()) == -1){
+            if (tmpCouponPrice.compareTo(coupon.getDiscount()) == -1) {
                 tmpCouponPrice = coupon.getDiscount();
                 tmpCouponId = coupon.getId();
             }
@@ -494,26 +491,53 @@ public class WxCartController {
         // 1. 用户不想使用优惠券，则不处理
         // 2. 用户想自动使用优惠券，则选择合适优惠券
         // 3. 用户已选择优惠券，则测试优惠券是否合适
-        if (couponId == null || couponId.equals(-1)){
+        if (couponId == null || couponId.equals(-1)) {
             couponId = -1;
             userCouponId = -1;
-        }
-        else if (couponId.equals(0)) {
+        } else if (couponId.equals(0)) {
             couponPrice = tmpCouponPrice;
             couponId = tmpCouponId;
             userCouponId = tmpUserCouponId;
-        }
-        else {
-            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponId, userCouponId, checkedGoodsPrice);
+        } else {
+            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponId, userCouponId, allGoodsPrice);
             // 用户选择的优惠券有问题，则选择合适优惠券，否则使用用户选择的优惠券
-            if(coupon == null){
+            if (coupon == null) {
                 couponPrice = tmpCouponPrice;
                 couponId = tmpCouponId;
                 userCouponId = tmpUserCouponId;
-            }
-            else {
+            } else {
                 couponPrice = coupon.getDiscount();
             }
+        }
+
+        // 商品价格
+        BigDecimal checkedGoodsPrice = new BigDecimal(0.00);
+        BigDecimal tempCouponPrice = new BigDecimal(couponPrice.doubleValue());
+        for (LitemallCart cart : checkedGoodsList) {
+            LitemallGoods goods = this.goodsService.findById(cart.getGoodsId());
+            BigDecimal goodsPrice = new BigDecimal(0.00);
+            if (goods.getCouponPrice().compareTo(new BigDecimal(0.00)) > 0) {
+                // 只有设置了券后价的商品才能用优惠
+                BigDecimal multipleGoodsPrice = cart.getPrice().multiply(new BigDecimal(cart.getNumber())).subtract(tempCouponPrice);
+                BigDecimal multipleGoodsCouponPrice = goods.getCouponPrice().multiply(new BigDecimal(cart.getNumber()));
+                if (multipleGoodsPrice.compareTo(multipleGoodsCouponPrice) < 0) {
+                    // 如果优惠之后价格低于最低价，则用最低价
+                    tempCouponPrice = tempCouponPrice.subtract(multipleGoodsPrice.subtract(multipleGoodsCouponPrice)).max(new BigDecimal(0.00));
+
+                    goodsPrice = goodsPrice.add(multipleGoodsCouponPrice);
+                } else {
+                    // 如果优惠之后价格不低于最低价，则用差价
+                    goodsPrice = goodsPrice.add(multipleGoodsPrice);
+                }
+            } else {
+                goodsPrice = cart.getPrice().multiply(new BigDecimal(cart.getNumber()));
+            }
+
+            //  只有当团购规格商品ID符合才进行团购优惠
+            if (grouponRules != null && grouponRules.getGoodsId().equals(cart.getGoodsId())) {
+                goodsPrice = goodsPrice.subtract(grouponPrice.multiply(new BigDecimal(cart.getNumber())));
+            }
+            checkedGoodsPrice = checkedGoodsPrice.add(goodsPrice);
         }
 
         // 根据订单商品总价计算运费，满88则免运费，否则8元；
@@ -526,7 +550,8 @@ public class WxCartController {
         BigDecimal integralPrice = new BigDecimal(0.00);
 
         // 订单费用
-        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal(0.00));
+//        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).subtract(couponPrice).max(new BigDecimal(0.00));
+        BigDecimal orderTotalPrice = checkedGoodsPrice.add(freightPrice).max(new BigDecimal(0.00));
 
         BigDecimal actualPrice = orderTotalPrice.subtract(integralPrice);
 

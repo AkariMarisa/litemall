@@ -179,4 +179,15 @@ public class LitemallCouponService {
         example.or().andStatusEqualTo(CouponConstant.STATUS_NORMAL).andTimeTypeEqualTo(CouponConstant.TIME_TYPE_TIME).andEndTimeLessThan(LocalDateTime.now()).andDeletedEqualTo(false);
         return couponMapper.selectByExample(example);
     }
+
+    /**
+     * 查询优惠券的名字和ID，用于前台select控件展示
+     *
+     * @return
+     */
+    public List<LitemallCoupon> queryAll() {
+        LitemallCouponExample example = new LitemallCouponExample();
+        example.or().andDeletedEqualTo(false);
+        return couponMapper.selectByExampleSelective(example, Column.id, Column.name);
+    }
 }
