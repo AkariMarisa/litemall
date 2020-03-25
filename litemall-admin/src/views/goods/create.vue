@@ -35,6 +35,14 @@
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
+
+        <el-form-item label="是否虚拟商品" prop="isVirtual">
+          <el-radio-group v-model="goods.isVirtual">
+            <el-radio :label="true">是</el-radio>
+            <el-radio :label="false">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="是否新品" prop="isNew">
           <el-radio-group v-model="goods.isNew">
             <el-radio :label="true">新品</el-radio>
@@ -377,7 +385,7 @@ export default {
       categoryList: [],
       brandList: [],
       coupons: [],
-      goods: { picUrl: '', gallery: [], isHot: false, isNew: true, isOnSale: true },
+      goods: { picUrl: '', gallery: [], isHot: false, isNew: true, isOnSale: true, isVirtual: false },
       specVisiable: false,
       specForm: { specification: '', value: '', picUrl: '' },
       multipleSpec: false,
