@@ -154,6 +154,7 @@ public class WxCartController {
             cart.setSpecifications(product.getSpecifications());
             cart.setUserId(userId);
             cart.setChecked(true);
+            cart.setIsVirtual(goods.getIsVirtual());
             cartService.add(cart);
         } else {
             //取得规格的信息,判断规格库存
@@ -230,6 +231,7 @@ public class WxCartController {
             cart.setSpecifications(product.getSpecifications());
             cart.setUserId(userId);
             cart.setChecked(true);
+            cart.setIsVirtual(goods.getIsVirtual());
             cartService.add(cart);
         } else {
             //取得规格的信息,判断规格库存
