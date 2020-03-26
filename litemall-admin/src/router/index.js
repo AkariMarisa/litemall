@@ -527,6 +527,31 @@ export const asyncRouterMap = [
       }
     ]
   },
+
+  {
+    path: '/ticket',
+    component: Layout,
+    redirect: 'noredirect',
+    alwaysShow: true,
+    name: 'ticketManage',
+    meta: {
+      title: '门票管理',
+      icon: 'chart'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/tickets/list'),
+        name: 'ticketList',
+        meta: {
+          perms: ['GET /admin/tickets/list'],
+          title: '门票管理',
+          noCache: true
+        }
+      }
+    ]
+  },
+
   {
     path: 'external-link',
     component: Layout,

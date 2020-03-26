@@ -40,7 +40,9 @@
     "pages/groupon/grouponDetail/grouponDetail",
     "pages/groupon/grouponList/grouponList",
     "pages/coupon/coupon",
-    "pages/help/help"
+    "pages/help/help",
+    "pages/ucenter/tickets/tickets",
+    "pages/ucenter/ticketDetail/ticketDetail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",

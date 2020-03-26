@@ -78,6 +78,10 @@
   </view>
   <view class='user_column'>
 
+    <view class='user_column_item' bindtap="goTicket">
+      <image class='user_column_item_image' src='/static/images/local_offer.png'></image>
+      <view class='user_column_item_text'>我的门票</view>
+    </view>
     <button class="user_column_item_phone" open-type="getPhoneNumber" bindgetphonenumber="bindPhoneNumber">
       <image class='user_column_item_image' src='/static/images/mobile.png'></image>
       <view class='user_column_item_text'>绑定手机</view>
@@ -96,10 +100,10 @@
       <image class='user_column_item_image' src='/static/images/customer.png'></image>
       <view class='user_column_item_text'>联系客服</view>
     </view>
-    <view class='user_column_item' wx:if="{{agentLevel==0}}" bindtap='payVIP'>
+    <!-- <view class='user_column_item' wx:if="{{agentLevel==0}}" bindtap='payVIP'>
       <image class='user_column_item_image' src='/static/images/vip.png'></image>
       <view class='user_column_item_text'>成为代理</view>
-    </view>
+    </view> -->
     <view class='user_column_item' wx:if="{{agentLevel!=0}}" bindtap='vips'>
       <image class='user_column_item_image' src='/static/images/vip.png'></image>
       <view class='user_column_item_text'>我的团队</view>

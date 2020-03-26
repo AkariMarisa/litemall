@@ -1,0 +1,6 @@
+<view class="container page">
+  <view class="panel">
+    <canvas canvas-id="canvas" style="width: 300px; height: 300px; margin:40px auto;"></canvas>
+    <view class="code">门票编号: {{id}}</view>
+  </view>
+</view>

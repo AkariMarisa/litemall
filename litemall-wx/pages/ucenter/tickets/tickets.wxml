@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="collect-list">
+    <view class="item" bindtap="ticketDetail" wx:for="{{ticketList}}" wx:key="id" data-index="{{index}}">
+      <image class="img" src="{{item.picUrl}}"></image>
+      <view class="info">
+        <view class="name">{{item.goodsName}}</view>
+        <view class="price">￥{{item.price}}</view>
+        <view class="state">{{item.isUsed ? '已使用' : '未使用'}}</view>
+        <view class="buyDate">购买日期: {{item.createTime}}</view>
+      </view>
+    </view>
+  </view>
+</view>

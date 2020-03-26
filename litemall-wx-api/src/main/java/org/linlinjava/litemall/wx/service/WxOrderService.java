@@ -115,6 +115,8 @@ public class WxOrderService {
     private LitemallAgentOrderService agentOrderService;
     @Autowired
     private LitemallGoodsService goodsService;
+    @Autowired
+    private LitemallTicketsService ticketsService;
 
     /**
      * 订单列表
@@ -749,12 +751,24 @@ public class WxOrderService {
 
         order.setPayId(payId);
         order.setPayTime(LocalDateTime.now());
-        LitemallAgentOrder agentOrder = agentOrderService.findByOrderId(order.getId());
-        Short orderStatus;
-        if (agentOrder != null) {
-            orderStatus = OrderUtil.STATUS_SHIP;
-        } else {
-            orderStatus = OrderUtil.STATUS_PAY;
+//        LitemallAgentOrder agentOrder = agentOrderService.findByOrderId(order.getId());
+//        Short orderStatus;
+//        if (agentOrder != null) {
+//            orderStatus = OrderUtil.STATUS_SHIP;
+//        } else {
+//            orderStatus = OrderUtil.STATUS_PAY;
+//        }
+
+        // AkariMarisa 如果订单是虚拟商品， 则状态直接改成402自动收货， 否则都是201已支付
+        Short orderStatus = OrderUtil.STATUS_PAY;
+        boolean isVirtual = false;
+        List<LitemallOrderGoods> orderGoodsList = this.orderGoodsService.queryByOid(order.getId());
+        for (LitemallOrderGoods goods : orderGoodsList) {
+            if (goods.getIsVirtual()) {
+                isVirtual = true;
+                orderStatus = OrderUtil.STATUS_AUTO_CONFIRM;
+                break;
+            }
         }
         order.setOrderStatus(orderStatus);
         if (orderService.updateWithOptimisticLocker(order) == 0) {
@@ -777,8 +791,23 @@ public class WxOrderService {
             }
         }
 
+        // AkariMarisa 针对虚拟商品生成券码
+        if (isVirtual) {
+            for (LitemallOrderGoods goods : orderGoodsList) {
+                if (goods.getIsVirtual()) {
+                    LitemallTickets tickets = new LitemallTickets();
+                    tickets.setUserId(order.getUserId());
+                    tickets.setGoodsId(goods.getGoodsId());
+                    tickets.setGoodsName(goods.getGoodsName());
+                    tickets.setPrice(goods.getPrice());
+                    tickets.setPicUrl(goods.getPicUrl());
+
+                    ticketsService.add(tickets);
+                }
+            }
+        }
+
         // 如果订单中有返券的商品，则给用户返券
-        List<LitemallOrderGoods> orderGoodsList = this.orderGoodsService.queryByOid(order.getId());
         Integer[] goodsIds = new Integer[orderGoodsList.size()];
         for (int i = 0; i < orderGoodsList.size(); i++) {
             goodsIds[i] = orderGoodsList.get(i).getGoodsId();

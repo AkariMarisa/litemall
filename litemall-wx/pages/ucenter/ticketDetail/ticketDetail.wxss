@@ -1,0 +1,32 @@
+page {
+  background-color: #f0f0f0;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding-bottom: 10rpx;
+}
+
+.panel {
+  height: 900rpx;
+  width: 700rpx;
+  margin-top: 100rpx;
+  background-color: #fff;
+}
+
+.qrcode {
+  height: 700rpx;
+  width: 700rpx;
+}
+
+.code {
+  text-align: center;
+  font-size: 48rpx;
+  line-height: 80rpx;
+}

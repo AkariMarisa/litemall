@@ -247,6 +247,22 @@ Page({
       return false;
     }
 
+    let hasNonVirtual = false;
+    let hasVirtual = false;
+    for (const goods of checkedGoods) {
+      if (goods.isVirtual) {
+        hasVirtual = true;
+      } else {
+        hasNonVirtual = true;
+      }
+    }
+
+    //不允许虚拟商品和非虚拟商品混合下单
+    if (hasNonVirtual && hasVirtual) {
+      util.showErrorToastNoIcon('虚拟商品请单独下单');
+      return false;
+    }
+
     // storage中设置了cartId，则是购物车购买
     try {
       wx.setStorageSync('cartId', 0);

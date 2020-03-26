@@ -20,7 +20,8 @@ Page({
     userCouponId: 0,
     message: '',
     grouponLinkId: 0, //参与的团购，如果是发起则为0
-    grouponRulesId: 0 //团购规则ID
+    grouponRulesId: 0, //团购规则ID
+    isVirtual: false //本次结算的商品中是否全是虚拟商品
   },
   onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -52,6 +53,19 @@ Page({
           userCouponId: res.data.userCouponId,
           grouponRulesId: res.data.grouponRulesId,
         });
+
+        let isVirtual = false;
+        for (const cart of that.data.checkedGoodsList) {
+          if (!cart.isVirtual) {
+            isVirtual = false;
+            break;
+          } else {
+            isVirtual = true;
+          }
+        }
+        that.setData({
+          isVirtual
+        })
       }
       wx.hideLoading();
     });
@@ -131,7 +145,7 @@ Page({
 
   },
   submitOrder: function() {
-    if (this.data.addressId <= 0) {
+    if (!this.data.isVirtual && this.data.addressId <= 0) {
       util.showErrorToast('请选择收货地址');
       return false;
     }
@@ -142,7 +156,8 @@ Page({
       userCouponId: this.data.userCouponId,
       message: this.data.message,
       grouponRulesId: this.data.grouponRulesId,
-      grouponLinkId: this.data.grouponLinkId
+      grouponLinkId: this.data.grouponLinkId,
+      isVirtualGoods: this.data.isVirtual
     }, 'POST').then(res => {
       if (res.errno === 0) {
         
@@ -154,41 +169,46 @@ Page({
         }
 
         const orderId = res.data.orderId;
-        util.request(api.OrderPrepay, {
-          orderId: orderId
-        }, 'POST').then(function(res) {
-          if (res.errno === 0) {
-            const payParam = res.data;
-            console.log("支付过程开始");
-            wx.requestPayment({
-              'timeStamp': payParam.timeStamp,
-              'nonceStr': payParam.nonceStr,
-              'package': payParam.packageValue,
-              'signType': payParam.signType,
-              'paySign': payParam.paySign,
-              'success': function(res) {
-                console.log("支付过程成功");
-                wx.redirectTo({
-                  url: '/pages/payResult/payResult?status=1&orderId=' + orderId
-                });
-              },
-              'fail': function(res) {
-                console.log("支付过程失败");
-                wx.redirectTo({
-                  url: '/pages/payResult/payResult?status=0&orderId=' + orderId
-                });
-              },
-              'complete': function(res) {
-                console.log("支付过程结束")
-              }
-            });
-          } else {
-            wx.redirectTo({
-              url: '/pages/payResult/payResult?status=0&orderId=' + orderId
-            });
-          }
-        });
+        // util.request(api.OrderPrepay, {
+        //   orderId: orderId
+        // }, 'POST').then(function(res) {
+        //   if (res.errno === 0) {
+        //     const payParam = res.data;
+        //     console.log("支付过程开始");
+        //     wx.requestPayment({
+        //       'timeStamp': payParam.timeStamp,
+        //       'nonceStr': payParam.nonceStr,
+        //       'package': payParam.packageValue,
+        //       'signType': payParam.signType,
+        //       'paySign': payParam.paySign,
+        //       'success': function(res) {
+        //         console.log("支付过程成功");
+        //         wx.redirectTo({
+        //           url: '/pages/payResult/payResult?status=1&orderId=' + orderId
+        //         });
+        //       },
+        //       'fail': function(res) {
+        //         console.log("支付过程失败");
+        //         wx.redirectTo({
+        //           url: '/pages/payResult/payResult?status=0&orderId=' + orderId
+        //         });
+        //       },
+        //       'complete': function(res) {
+        //         console.log("支付过程结束")
+        //       }
+        //     });
+        //   } else {
+        //     wx.redirectTo({
+        //       url: '/pages/payResult/payResult?status=0&orderId=' + orderId
+        //     });
+        //   }
+        // });
 
+
+        console.log("支付过程成功");
+        wx.redirectTo({
+          url: '/pages/payResult/payResult?status=1&orderId=' + orderId
+        });
       } else {
         wx.redirectTo({
           url: '/pages/payResult/payResult?status=0&orderId=' + orderId

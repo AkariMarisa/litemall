@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="address-box">
+  <view class="address-box" wx:if="{{!isVirtual}}">
     <view class="address-item" bindtap="selectAddress" wx:if="{{checkedAddress.id > 0}}">
       <view class="l">
         <text class="name">{{checkedAddress.name}}</text>

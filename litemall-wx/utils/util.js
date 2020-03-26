@@ -87,9 +87,17 @@ function showErrorToast(msg) {
   })
 }
 
+function showErrorToastNoIcon(msg) {
+  wx.showToast({
+    title: msg,
+    icon: 'none'
+  })
+}
+
 module.exports = {
   formatTime,
   request,
   redirect,
-  showErrorToast
+  showErrorToast,
+  showErrorToastNoIcon
 }

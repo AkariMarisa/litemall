@@ -246,5 +246,10 @@ Page({
       }
     })
 
+  },
+  goTicket: function() {
+    wx.navigateTo({
+      url: '/pages/ucenter/tickets/tickets'
+    });
   }
 })
