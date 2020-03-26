@@ -135,10 +135,11 @@ public class WxOrderService {
             return ResponseUtil.unlogin();
         }
 
-        List<Integer> agentOrderIdList = agentOrderService.getOrderIdsByUserId(userId);
+//        List<Integer> agentOrderIdList = agentOrderService.getOrderIdsByUserId(userId);
 
         List<Short> orderStatus = OrderUtil.orderStatus(showType);
-        List<LitemallOrder> orderList = orderService.queryByOrderStatusWithoutAgentOrders(userId, orderStatus, agentOrderIdList, page, limit, sort, order);
+//        List<LitemallOrder> orderList = orderService.queryByOrderStatusWithoutAgentOrders(userId, orderStatus, agentOrderIdList, page, limit, sort, order);
+        List<LitemallOrder> orderList = orderService.queryByOrderStatus(userId, orderStatus, page, limit, sort, order);
 
         List<Map<String, Object>> orderVoList = new ArrayList<>(orderList.size());
         for (LitemallOrder o : orderList) {
@@ -388,10 +389,10 @@ public class WxOrderService {
         order.setUserId(userId);
         order.setOrderSn(orderService.generateOrderSn(userId));
         order.setOrderStatus(OrderUtil.STATUS_CREATE);
-        order.setConsignee(checkedAddress == null ? "test" : checkedAddress.getName());
-        order.setMobile(checkedAddress == null ? "110" : checkedAddress.getTel());
+        order.setConsignee(checkedAddress == null ? "" : checkedAddress.getName());
+        order.setMobile(checkedAddress == null ? "" : checkedAddress.getTel());
         order.setMessage(message);
-        String detailedAddress = checkedAddress == null ? "test" : (checkedAddress.getProvince() + checkedAddress.getCity() + checkedAddress.getCounty() + " " + checkedAddress.getAddressDetail());
+        String detailedAddress = checkedAddress == null ? "" : (checkedAddress.getProvince() + checkedAddress.getCity() + checkedAddress.getCounty() + " " + checkedAddress.getAddressDetail());
         order.setAddress(detailedAddress);
         order.setGoodsPrice(checkedGoodsPrice);
         order.setFreightPrice(freightPrice);
@@ -412,12 +413,12 @@ public class WxOrderService {
         orderId = order.getId();
 
         // 保存代理购买订单
-        if (isVirtualGoods != null && isVirtualGoods) {
-            LitemallAgentOrder agentOrder = new LitemallAgentOrder();
-            agentOrder.setOrderId(orderId);
-            agentOrder.setUserId(userId);
-            agentOrderService.add(agentOrder);
-        }
+//        if (isVirtualGoods != null && isVirtualGoods) {
+//            LitemallAgentOrder agentOrder = new LitemallAgentOrder();
+//            agentOrder.setOrderId(orderId);
+//            agentOrder.setUserId(userId);
+//            agentOrderService.add(agentOrder);
+//        }
 
         // 添加订单商品表项
         for (LitemallCart cartGoods : checkedGoodsList) {
@@ -433,6 +434,7 @@ public class WxOrderService {
             orderGoods.setNumber(cartGoods.getNumber());
             orderGoods.setSpecifications(cartGoods.getSpecifications());
             orderGoods.setAddTime(LocalDateTime.now());
+            orderGoods.setIsVirtual(cartGoods.getIsVirtual());
 
             orderGoodsService.add(orderGoods);
         }
