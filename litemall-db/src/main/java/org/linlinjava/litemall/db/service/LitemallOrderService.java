@@ -91,7 +91,9 @@ public class LitemallOrderService {
         example.setOrderByClause(LitemallOrder.Column.addTime.desc());
         LitemallOrderExample.Criteria criteria = example.or();
         criteria.andUserIdEqualTo(userId);
-        criteria.andIdNotIn(agentOrderIds);
+        if (agentOrderIds !=null && agentOrderIds.size() > 0) {
+            criteria.andIdNotIn(agentOrderIds);
+        }
         if (orderStatus != null) {
             criteria.andOrderStatusIn(orderStatus);
         }
