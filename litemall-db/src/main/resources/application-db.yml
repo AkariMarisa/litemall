@@ -7,9 +7,9 @@ pagehelper:
 spring:
   datasource:
     druid:
-      url:  jdbc:mysql://192.168.122.188:3306/litemall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false
+      url:  jdbc:mysql://47.104.31.188:3306/litemall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&verifyServerCertificate=false&useSSL=false
       driver-class-name:  com.mysql.jdbc.Driver
-      username:  litemall
+      username:  litemall_wzqh
       password:  litemall123456
       initial-size:  10
       max-active:  50
