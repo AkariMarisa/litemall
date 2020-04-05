@@ -10,10 +10,7 @@ import org.linlinjava.litemall.core.notify.NotifyService;
 import org.linlinjava.litemall.core.notify.NotifyType;
 import org.linlinjava.litemall.core.util.JacksonUtil;
 import org.linlinjava.litemall.core.util.ResponseUtil;
-import org.linlinjava.litemall.db.domain.LitemallComment;
-import org.linlinjava.litemall.db.domain.LitemallOrder;
-import org.linlinjava.litemall.db.domain.LitemallOrderGoods;
-import org.linlinjava.litemall.db.domain.UserVo;
+import org.linlinjava.litemall.db.domain.*;
 import org.linlinjava.litemall.db.service.*;
 import org.linlinjava.litemall.db.util.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +47,8 @@ public class AdminOrderService {
     private NotifyService notifyService;
     @Autowired
     private LogHelper logHelper;
+    @Autowired
+    private LitemallTicketsService ticketsService;
 
     public Object list(Integer userId, String orderSn, List<Short> orderStatusArray,
                        Integer page, Integer limit, String sort, String order) {
@@ -109,6 +108,17 @@ public class AdminOrderService {
         // 如果订单不是退款状态，则不能退款
         if (!order.getOrderStatus().equals(OrderUtil.STATUS_REFUND)) {
             return ResponseUtil.fail(ORDER_CONFIRM_NOT_ALLOWED, "订单不能确认收货");
+        }
+
+        // AkariMarisa 如果是门票，则销掉对应的门票，使之无法使用
+        LitemallTickets tickets = ticketsService.findByOrderId(order.getId());
+        if (tickets != null) {
+        // AkariMarisa 如果门票已经用了，或者已经被取消掉了，那么就不能退款了
+            if (tickets.getDeleted() || tickets.getUsed()) {
+                return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单不能退款");
+            }
+            tickets.setDeleted(true);
+            ticketsService.updateById(tickets);
         }
 
         // 微信退款

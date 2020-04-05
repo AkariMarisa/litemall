@@ -35,6 +35,8 @@ public class WxTicketsService {
             Map<String, Object> ticketsVo = new HashMap<>();
             ticketsVo.put("id", t.getId());
             ticketsVo.put("picUrl", t.getPicUrl());
+            ticketsVo.put("userId", t.getUserId());
+            ticketsVo.put("orderId", t.getOrderId());
             ticketsVo.put("goodsName", t.getGoodsName());
             ticketsVo.put("price", t.getPrice());
             ticketsVo.put("createTime", t.getCreateTime());
@@ -60,6 +62,8 @@ public class WxTicketsService {
         }
         Map<String, Object> ticketVo = new HashMap<String, Object>();
         ticketVo.put("id", ticket.getId());
+        ticketVo.put("userId", ticket.getUserId());
+        ticketVo.put("orderId", ticket.getOrderId());
 
         Map<String, Object> result = new HashMap<String ,Object>();
         result.put("ticketInfo", ticketVo);

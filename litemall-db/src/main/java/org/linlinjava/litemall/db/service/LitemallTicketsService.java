@@ -26,10 +26,17 @@ public class LitemallTicketsService {
         return ticketsMapper.selectByPrimaryKey(ticketId);
     }
 
+    public LitemallTickets findByOrderId(Integer orderId) {
+        LitemallTicketsExample example = new LitemallTicketsExample();
+        example.or().andOrderIdEqualTo(orderId);
+        return ticketsMapper.selectOneByExample(example);
+    }
+
     public List<LitemallTickets> queryByUser(Integer userId, Integer page, Integer limit, String sort, String order) {
         LitemallTicketsExample example = new LitemallTicketsExample();
         example.setOrderByClause(LitemallTickets.Column.createTime.desc());
         LitemallTicketsExample.Criteria criteria = example.or();
+        criteria.andDeletedEqualTo(false);
         criteria.andUserIdEqualTo(userId);
 
         if (!StringUtils.isEmpty(sort) && !StringUtils.isEmpty(order)) {
@@ -43,6 +50,7 @@ public class LitemallTicketsService {
     public List<LitemallTickets> querySelective(Integer id, Integer page, Integer limit, String sort, String order) {
         LitemallTicketsExample example = new LitemallTicketsExample();
         LitemallTicketsExample.Criteria criteria = example.createCriteria();
+        criteria.andDeletedEqualTo(false);
 
         if (id != null) {
             criteria.andIdEqualTo(id);

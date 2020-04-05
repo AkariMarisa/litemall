@@ -219,6 +219,26 @@ public class WxOrderService {
 
         List<LitemallOrderGoods> orderGoodsList = orderGoodsService.queryByOid(order.getId());
 
+        // AkariMarisa 如果是虚拟商品，则购买成功后也可以退款
+        if (order.getOrderStatus() == 402) {
+            for (LitemallOrderGoods goods : orderGoodsList) {
+                if (goods.getIsVirtual()) {
+                    // AkariMarisa 如果门票已经用了，或者已经被取消掉了，那么就不能申请退款了
+                    LitemallTickets tickets = ticketsService.findByOrderId(orderId);
+                    if (tickets == null) {
+                        return ResponseUtil.fail(ORDER_INVALID, "订单信息异常");
+                    } else {
+                        if (!tickets.getUsed() && !tickets.getDeleted()) {
+                            OrderHandleOption handleOption = (OrderHandleOption)orderVo.get("handleOption");
+                            handleOption.setRefund(true);
+                            orderVo.put("handleOption", handleOption);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         Map<String, Object> result = new HashMap<>();
         result.put("orderInfo", orderVo);
         result.put("orderGoods", orderGoodsList);
@@ -797,6 +817,7 @@ public class WxOrderService {
                 if (goods.getIsVirtual()) {
                     LitemallTickets tickets = new LitemallTickets();
                     tickets.setUserId(order.getUserId());
+                    tickets.setOrderId(order.getId());
                     tickets.setGoodsId(goods.getGoodsId());
                     tickets.setGoodsName(goods.getGoodsName());
                     tickets.setPrice(goods.getPrice());
@@ -948,6 +969,21 @@ public class WxOrderService {
         }
 
         OrderHandleOption handleOption = OrderUtil.build(order);
+        List<LitemallOrderGoods> orderGoodsList = orderGoodsService.queryByOid(order.getId());
+        for (LitemallOrderGoods goods : orderGoodsList) {
+            if (goods.getIsVirtual()) {
+                // AkariMarisa 如果门票已经用了，或者已经被取消掉了，，那么就不能申请退款了
+                LitemallTickets tickets = ticketsService.findByOrderId(orderId);
+                if (tickets != null) {
+                    if (!tickets.getDeleted() && !tickets.getUsed()) {
+                        handleOption.setRefund(true);
+                    }
+                } else {
+                    return ResponseUtil.fail(ORDER_INVALID_OPERATION, "订单不能退款");
+                }
+                break;
+            }
+        }
         if (!handleOption.isRefund()) {
             return ResponseUtil.fail(ORDER_INVALID_OPERATION, "订单不能取消");
         }
