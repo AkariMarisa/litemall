@@ -7,7 +7,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    id: 0
+    id: 0,
+    userId: 0,
+    orderId: 0
   },
 
   patchNumber(num, n) {
@@ -19,12 +21,14 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      id: this.patchNumber(options.id, 12)
+      id: this.patchNumber(options.id, 12),
+      userId: options.userId,
+      orderId: options.orderId
     });
 
     console.log(QRCode)
     var qrcode = new QRCode('canvas', {
-      text: this.patchNumber(options.id, 12),
+      text: options.id + '-' + options.userId + '-' + options.orderId,
       width: 300,
       height: 300,
       colorDark: '#000000',

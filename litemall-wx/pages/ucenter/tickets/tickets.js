@@ -65,7 +65,7 @@ Page({
     const ticket = this.data.ticketList[i];
     if (!ticket.isUsed) {
       wx.navigateTo({
-        url: '/pages/ucenter/ticketDetail/ticketDetail?id=' + ticket.id
+        url: '/pages/ucenter/ticketDetail/ticketDetail?id=' + ticket.id + '&userId=' + ticket.userId + '&orderId=' + ticket.orderId 
       })
     }
   },
