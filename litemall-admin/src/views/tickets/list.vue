@@ -12,6 +12,10 @@
 
       <el-table-column align="center" label="门票编号" prop="id" sortable />
 
+      <el-table-column align="center" label="用户ID" prop="userId" hidden />
+
+      <el-table-column align="center" label="订单ID" prop="orderId" hidden />
+
       <el-table-column align="center" label="门票标题" prop="goodsName" />
 
       <el-table-column align="center" label="门票价格" prop="price" />

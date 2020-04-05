@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.linlinjava.litemall.admin.util.AdminResponseCode.TICKET_INVALID;
+import static org.linlinjava.litemall.admin.util.AdminResponseCode.TICKET_IS_USED;
+
 @RestController
 @RequestMapping("/admin/tickets")
 @Validated
@@ -45,9 +48,14 @@ public class AdminTicketsController {
             return ResponseUtil.badArgument();
         }
 
-        LitemallTickets tickets2 = ticketsService.findById(tickets.getId());
+//        LitemallTickets tickets2 = ticketsService.findById(tickets.getId());
+        LitemallTickets tickets2 = ticketsService.findBySelect(tickets.getId(), tickets.getUserId(), tickets.getOrderId());
         if (tickets2 == null) {
-            return ResponseUtil.badArgument();
+            return ResponseUtil.fail(TICKET_INVALID, "查无此门票");
+        }
+
+        if (tickets2.getUsed()) {
+            return ResponseUtil.fail(TICKET_IS_USED, "门票已被使用");
         }
 
         tickets2.setUsed(true);

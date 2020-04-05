@@ -32,6 +32,15 @@ public class LitemallTicketsService {
         return ticketsMapper.selectOneByExample(example);
     }
 
+    public LitemallTickets findBySelect(Integer ticketId, Integer userId, Integer orderId) {
+        LitemallTicketsExample example = new LitemallTicketsExample();
+        LitemallTicketsExample.Criteria criteria = example.or();
+        criteria.andIdEqualTo(ticketId);
+        criteria.andUserIdEqualTo(userId);
+        criteria.andOrderIdEqualTo(orderId);
+        return ticketsMapper.selectOneByExample(example);
+    }
+
     public List<LitemallTickets> queryByUser(Integer userId, Integer page, Integer limit, String sort, String order) {
         LitemallTicketsExample example = new LitemallTicketsExample();
         example.setOrderByClause(LitemallTickets.Column.createTime.desc());

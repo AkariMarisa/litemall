@@ -21,4 +21,6 @@ public class AdminResponseCode {
     public static final Integer ROLE_SUPER_SUPERMISSION = 641;
     public static final Integer ROLE_USER_EXIST = 642;
 
+    public static final Integer TICKET_INVALID = 700;
+    public static final Integer TICKET_IS_USED = 701;
 }
