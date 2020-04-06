@@ -224,14 +224,21 @@ public class WxOrderService {
             for (LitemallOrderGoods goods : orderGoodsList) {
                 if (goods.getIsVirtual()) {
                     // AkariMarisa 如果门票已经用了，或者已经被取消掉了，那么就不能申请退款了
-                    LitemallTickets tickets = ticketsService.findByOrderId(orderId);
-                    if (tickets == null) {
+                    List<LitemallTickets> ticketsList = ticketsService.queryByOrderId(orderId);
+                    if (ticketsList == null || ticketsList.size() <= 0) {
                         return ResponseUtil.fail(ORDER_INVALID, "订单信息异常");
                     } else {
-                        if (!tickets.getUsed() && !tickets.getDeleted()) {
-                            OrderHandleOption handleOption = (OrderHandleOption)orderVo.get("handleOption");
-                            handleOption.setRefund(true);
-                            orderVo.put("handleOption", handleOption);
+                        int count = 0;
+                        for (LitemallTickets tickets : ticketsList) {
+                            if (tickets.getUsed() || tickets.getDeleted()) {
+                                count ++;
+                            }
+                        }
+
+                        if (count < ticketsList.size()) {
+                                OrderHandleOption handleOption = (OrderHandleOption)orderVo.get("handleOption");
+                                handleOption.setRefund(true);
+                                orderVo.put("handleOption", handleOption);
                         }
                     }
                     break;
@@ -422,6 +429,7 @@ public class WxOrderService {
         order.setIntegralPrice(integralPrice);
         order.setOrderPrice(orderTotalPrice);
         order.setActualPrice(actualPrice);
+        order.setRefundablePrice(actualPrice);
 
         // 有团购活动
         if (grouponRules != null) {
@@ -815,15 +823,18 @@ public class WxOrderService {
         if (isVirtual) {
             for (LitemallOrderGoods goods : orderGoodsList) {
                 if (goods.getIsVirtual()) {
-                    LitemallTickets tickets = new LitemallTickets();
-                    tickets.setUserId(order.getUserId());
-                    tickets.setOrderId(order.getId());
-                    tickets.setGoodsId(goods.getGoodsId());
-                    tickets.setGoodsName(goods.getGoodsName());
-                    tickets.setPrice(goods.getPrice());
-                    tickets.setPicUrl(goods.getPicUrl());
+                    Short num = goods.getNumber();
+                    for (int i = 0; i < num; i ++) {
+                        LitemallTickets tickets = new LitemallTickets();
+                        tickets.setUserId(order.getUserId());
+                        tickets.setOrderId(order.getId());
+                        tickets.setGoodsId(goods.getGoodsId());
+                        tickets.setGoodsName(goods.getGoodsName());
+                        tickets.setPrice(goods.getPrice());
+                        tickets.setPicUrl(goods.getPicUrl());
 
-                    ticketsService.add(tickets);
+                        ticketsService.add(tickets);
+                    }
                 }
             }
         }
@@ -973,9 +984,15 @@ public class WxOrderService {
         for (LitemallOrderGoods goods : orderGoodsList) {
             if (goods.getIsVirtual()) {
                 // AkariMarisa 如果门票已经用了，或者已经被取消掉了，，那么就不能申请退款了
-                LitemallTickets tickets = ticketsService.findByOrderId(orderId);
-                if (tickets != null) {
-                    if (!tickets.getDeleted() && !tickets.getUsed()) {
+                List<LitemallTickets> ticketsList = ticketsService.queryByOrderId(orderId);
+                if (ticketsList != null && ticketsList.size() > 0) {
+                    int count = 0;
+                    for (LitemallTickets tickets : ticketsList) {
+                        if (tickets.getDeleted() || tickets.getUsed()) {
+                            count ++;
+                        }
+                    }
+                    if (count < ticketsList.size()) {
                         handleOption.setRefund(true);
                     }
                 } else {

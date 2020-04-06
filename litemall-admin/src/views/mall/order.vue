@@ -29,6 +29,8 @@
 
       <el-table-column align="center" label="支付金额" prop="actualPrice" />
 
+      <el-table-column align="center" label="可退款金额" prop="refundablePrice" />
+
       <el-table-column align="center" label="支付时间" prop="payTime" />
 
       <el-table-column align="center" label="物流单号" prop="shipSn" />
@@ -271,7 +273,7 @@ export default {
     },
     handleRefund(row) {
       this.refundForm.orderId = row.id
-      this.refundForm.refundMoney = row.actualPrice
+      this.refundForm.refundMoney = row.refundablePrice
 
       this.refundDialogVisible = true
       this.$nextTick(() => {

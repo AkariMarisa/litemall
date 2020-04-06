@@ -39,7 +39,7 @@ Page({
       this.getTicketList();
     } else {
       wx.showToast({
-        title: '没有更多用户收藏了',
+        title: '没有更多门票信息了',
         icon: 'none',
         duration: 2000
       });

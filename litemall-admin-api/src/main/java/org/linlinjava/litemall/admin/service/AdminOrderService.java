@@ -101,7 +101,7 @@ public class AdminOrderService {
             return ResponseUtil.badArgument();
         }
 
-        if (order.getActualPrice().compareTo(new BigDecimal(refundMoney)) != 0) {
+        if (order.getActualPrice().compareTo(new BigDecimal(refundMoney)) < 0) {
             return ResponseUtil.badArgumentValue();
         }
 
@@ -111,14 +111,21 @@ public class AdminOrderService {
         }
 
         // AkariMarisa 如果是门票，则销掉对应的门票，使之无法使用
-        LitemallTickets tickets = ticketsService.findByOrderId(order.getId());
-        if (tickets != null) {
-        // AkariMarisa 如果门票已经用了，或者已经被取消掉了，那么就不能退款了
-            if (tickets.getDeleted() || tickets.getUsed()) {
+        List<LitemallTickets> ticketsList = ticketsService.queryByOrderId(order.getId());
+        int count = 0;
+        if (ticketsList != null && ticketsList.size() > 0) {
+            for (LitemallTickets tickets : ticketsList) {
+                if (tickets.getDeleted() || tickets.getUsed()) {
+                    count ++;
+                } else {
+                    tickets.setDeleted(true);
+                    ticketsService.updateById(tickets);
+                }
+            }
+            // AkariMarisa 如果同一个订单的所有门票都被退掉，或者被用掉了，那么就不能退款了
+            if (count >= ticketsList.size()) {
                 return ResponseUtil.fail(ORDER_REFUND_FAILED, "订单不能退款");
             }
-            tickets.setDeleted(true);
-            ticketsService.updateById(tickets);
         }
 
         // 微信退款
@@ -127,8 +134,9 @@ public class AdminOrderService {
         wxPayRefundRequest.setOutRefundNo("refund_" + order.getOrderSn());
         // 元转成分
         Integer totalFee = order.getActualPrice().multiply(new BigDecimal(100)).intValue();
+        Integer refundableFee = order.getRefundablePrice().multiply(new BigDecimal(100)).intValue();
         wxPayRefundRequest.setTotalFee(totalFee);
-        wxPayRefundRequest.setRefundFee(totalFee);
+        wxPayRefundRequest.setRefundFee(refundableFee);
 
         WxPayRefundResult wxPayRefundResult;
         try {
@@ -147,6 +155,7 @@ public class AdminOrderService {
         }
 
         // 设置订单取消状态
+        order.setRefundablePrice(new BigDecimal(0));
         order.setOrderStatus(OrderUtil.STATUS_REFUND_CONFIRM);
         if (orderService.updateWithOptimisticLocker(order) == 0) {
             throw new RuntimeException("更新数据已失效");
