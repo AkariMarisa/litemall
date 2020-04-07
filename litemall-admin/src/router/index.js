@@ -535,7 +535,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     name: 'ticketManage',
     meta: {
-      title: '门票管理',
+      title: '核销管理',
       icon: 'chart'
     },
     children: [
@@ -545,7 +545,7 @@ export const asyncRouterMap = [
         name: 'ticketList',
         meta: {
           perms: ['GET /admin/tickets/list'],
-          title: '门票管理',
+          title: '核销管理',
           noCache: true
         }
       }
