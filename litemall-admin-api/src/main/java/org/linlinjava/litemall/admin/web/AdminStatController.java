@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +58,20 @@ public class AdminStatController {
     public Object statGoods() {
         List<Map> rows = statService.statGoods();
         String[] columns = new String[]{"day", "orders", "products", "amount"};
+        StatVo statVo = new StatVo();
+        statVo.setColumns(columns);
+        statVo.setRows(rows);
+        return ResponseUtil.ok(statVo);
+    }
+
+    @RequiresPermissions("admin:stat:complex")
+    @RequiresPermissionsDesc(menu = {"统计管理", "商城统计"}, button = "查询")
+    @GetMapping("/complex")
+    public Object statComplex(Integer days, Date start, Date end,
+                              @RequestParam(defaultValue = "1") Integer page,
+                              @RequestParam(defaultValue = "10") Integer limit) {
+        List<Map> rows = statService.statComplex(days, start, end, page, limit);
+        String[] columns = new String[]{"day", "orders", "products", "amount", "goodsViews", "virtualGoodsViews", "nonVirtualGoodsViews", "platformViews"};
         StatVo statVo = new StatVo();
         statVo.setColumns(columns);
         statVo.setRows(rows);

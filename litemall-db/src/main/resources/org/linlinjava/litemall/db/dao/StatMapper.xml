@@ -28,4 +28,30 @@
         from litemall_order_goods
         group by substr(add_time,1, 10)
     </select>
+    <select id="statComplex" resultType="map">
+        select
+        substr(cal.datelist,1, 10) as day,
+        ifnull(count(distinct og.order_id), 0) as orders,
+        ifnull(sum(number), 0) as products,
+        ifnull(sum(number*og.price), 0) as amount,
+        ifnull(sum(gv.views), 0) as goodsViews,
+        ifnull(sum(if(g.is_virtual='true',gv.views,0)), 0) as virtualGoodsViews,
+        ifnull(sum(if(g.is_virtual!='true',gv.views,0)), 0) as nonVirtualGoodsViews,
+        ifnull(pv.views, 0) as platformViews
+        from litemall_calendar cal
+        left join litemall_order_goods og on substr(og.add_time,1,10) = substr(cal.datelist,1,10)
+        left join litemall_goods_view gv on substr(gv.add_time,1,10) = substr(cal.datelist,1,10)
+        left join litemall_goods g on gv.goods_id = g.id
+        left join litemall_platform_view pv on substr(pv.add_time,1,10) = substr(cal.datelist,1,10)
+        <choose>
+            <when test="days != null">
+                where date(datelist) between DATE_SUB(CURDATE(), INTERVAL #{days} DAY) and CURDATE()
+                group by substr(cal.datelist,1, 10)
+            </when>
+            <when test="start != null and end != null">
+                where date(datelist) between #{start} and #{end}
+                group by substr(cal.datelist,1, 10)
+            </when>
+        </choose>
+    </select>
 </mapper>
