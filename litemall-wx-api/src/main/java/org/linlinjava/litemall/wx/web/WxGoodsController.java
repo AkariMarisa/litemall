@@ -73,6 +73,9 @@ public class WxGoodsController {
 	@Autowired
 	private LitemallGrouponRulesService rulesService;
 
+	@Autowired
+	private LitemallGoodsViewService goodsViewService;
+
 	private final static ArrayBlockingQueue<Runnable> WORK_QUEUE = new ArrayBlockingQueue<>(9);
 
 	private final static RejectedExecutionHandler HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -196,6 +199,18 @@ public class WxGoodsController {
 
 		//商品分享图片地址
 		data.put("shareImage", info.getShareUrl());
+
+		// AkariMarisa 当日商品浏览量加一
+		LitemallGoodsView goodsView = this.goodsViewService.findTodayRecord(info.getId());
+		if (goodsView == null) {
+			goodsView = new LitemallGoodsView();
+			goodsView.setGoodsId(info.getId());
+			goodsView.setViews(1);
+			this.goodsViewService.add(goodsView);
+		} else {
+			goodsView.setViews(goodsView.getViews() +1);
+			this.goodsViewService.update(goodsView);
+		}
 		return ResponseUtil.ok(data);
 	}
 

@@ -6,6 +6,7 @@ import org.linlinjava.litemall.core.system.SystemConfig;
 import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.linlinjava.litemall.db.domain.LitemallCategory;
 import org.linlinjava.litemall.db.domain.LitemallGoods;
+import org.linlinjava.litemall.db.domain.LitemallPlatformView;
 import org.linlinjava.litemall.db.service.*;
 import org.linlinjava.litemall.wx.annotation.LoginUser;
 import org.linlinjava.litemall.wx.service.HomeCacheManager;
@@ -52,6 +53,9 @@ public class WxHomeController {
 
     @Autowired
     private LitemallCouponService couponService;
+
+    @Autowired
+    private LitemallPlatformViewService platformViewService;
 
     private final static ArrayBlockingQueue<Runnable> WORK_QUEUE = new ArrayBlockingQueue<>(9);
 
@@ -146,6 +150,17 @@ public class WxHomeController {
             e.printStackTrace();
         }finally {
             executorService.shutdown();
+
+            // AkariMarisa 当日平台浏览数加一
+            LitemallPlatformView platformView = this.platformViewService.findTodayRecord();
+            if (platformView == null) {
+                platformView = new LitemallPlatformView();
+                platformView.setViews(1);
+                this.platformViewService.add(platformView);
+            } else {
+                platformView.setViews(platformView.getViews() + 1);
+                this.platformViewService.update(platformView);
+            }
         }
         return ResponseUtil.ok(entity);
     }
