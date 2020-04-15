@@ -46,12 +46,12 @@
         <choose>
             <when test="days != null">
                 where date(datelist) between DATE_SUB(CURDATE(), INTERVAL #{days} DAY) and CURDATE()
-                group by substr(cal.datelist,1, 10)
             </when>
             <when test="start != null and end != null">
                 where date(datelist) between #{start} and #{end}
-                group by substr(cal.datelist,1, 10)
             </when>
         </choose>
+        group by substr(cal.datelist,1, 10)
+        order by cal.datelist asc
     </select>
 </mapper>

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,15 +68,20 @@ public class AdminStatController {
     @RequiresPermissions("admin:stat:complex")
     @RequiresPermissionsDesc(menu = {"统计管理", "商城统计"}, button = "查询")
     @GetMapping("/complex")
-    public Object statComplex(Integer days, Date start, Date end,
+    public Object statComplex(Integer days, Long start, Long end,
                               @RequestParam(defaultValue = "1") Integer page,
                               @RequestParam(defaultValue = "10") Integer limit) {
-        List<Map> rows = statService.statComplex(days, start, end, page, limit);
+        Date startDate = start == null ? null : new Date(start);
+        Date endDate = end == null ? null : new Date(end);
+        List<Map> rows = statService.statComplex(days, startDate, endDate, page, limit);
         String[] columns = new String[]{"day", "orders", "products", "amount", "goodsViews", "virtualGoodsViews", "nonVirtualGoodsViews", "platformViews"};
         StatVo statVo = new StatVo();
         statVo.setColumns(columns);
         statVo.setRows(rows);
-        return ResponseUtil.ok(statVo);
+        Map<String, Object> resultMap = new HashMap<String ,Object>();
+        resultMap.put("chartData", statVo);
+        resultMap.put("listData", ResponseUtil.okList(rows));
+        return ResponseUtil.ok(resultMap);
     }
 
 }

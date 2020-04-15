@@ -23,3 +23,11 @@ export function statGoods(query) {
     params: query
   })
 }
+
+export function statComplex(query) {
+  return request({
+    url: '/stat/complex',
+    method: 'get',
+    params: query
+  })
+}

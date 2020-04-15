@@ -524,6 +524,16 @@ export const asyncRouterMap = [
           title: '商品统计',
           noCache: true
         }
+      },
+      {
+        path: 'complex',
+        component: () => import('@/views/stat/complex'),
+        name: 'statComplex',
+        meta: {
+          perms: ['GET /admin/stat/complex'],
+          title: '平台统计',
+          noCache: true
+        }
       }
     ]
   },
