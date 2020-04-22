@@ -39,7 +39,12 @@
         ifnull(sum(if(g.is_virtual!='true',gv.views,0)), 0) as nonVirtualGoodsViews,
         ifnull(pv.views, 0) as platformViews
         from litemall_calendar cal
-        left join litemall_order_goods og on substr(og.add_time,1,10) = substr(cal.datelist,1,10)
+        left join (
+            select og1.* from
+            litemall_order_goods og1
+            inner join litemall_order o1 on o1.id = og1.order_id
+            where o1.order_status in (200, 201, 301, 401, 402)
+        ) og on substr(og.add_time,1,10) = substr(cal.datelist,1,10)
         left join litemall_goods_view gv on substr(gv.add_time,1,10) = substr(cal.datelist,1,10)
         left join litemall_goods g on gv.goods_id = g.id
         left join litemall_platform_view pv on substr(pv.add_time,1,10) = substr(cal.datelist,1,10)
@@ -52,6 +57,6 @@
             </when>
         </choose>
         group by substr(cal.datelist,1, 10)
-        order by cal.datelist asc
+        order by cal.datelist desc
     </select>
 </mapper>
