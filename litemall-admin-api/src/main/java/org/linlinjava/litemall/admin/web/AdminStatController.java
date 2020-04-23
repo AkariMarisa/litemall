@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/admin/stat")
@@ -77,7 +74,12 @@ public class AdminStatController {
         String[] columns = new String[]{"day", "orders", "products", "amount", "goodsViews", "virtualGoodsViews", "nonVirtualGoodsViews", "platformViews"};
         StatVo statVo = new StatVo();
         statVo.setColumns(columns);
-        statVo.setRows(rows);
+        this.logger.debug("rows.size() " + rows.size());
+        List<Map> reverseRows = Arrays.asList(new Map[rows.size()]);
+        this.logger.debug("reverseRows.size() " + reverseRows.size());
+        Collections.copy(reverseRows, rows);
+        Collections.reverse(reverseRows);
+        statVo.setRows(reverseRows);
         Map<String, Object> resultMap = new HashMap<String ,Object>();
         resultMap.put("chartData", statVo);
         resultMap.put("listData", ResponseUtil.okList(rows));
