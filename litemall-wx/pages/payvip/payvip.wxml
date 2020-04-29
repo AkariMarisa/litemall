@@ -4,16 +4,16 @@
     <view class="item" bindtap="getVIP1">
       <view class="content">
         <view class="left">
-          <view class="discount">50元</view>
+          <view class="discount">200元</view>
 
         </view>
         <view class="right">
-          <view class="name">低级代理</view>
+          <view class="name">代理</view>
         </view>
       </view>
-      <view class="info">低级介绍</view>
+      <view class="info">感谢您对本平台的信赖和支持，更欢迎您加入本平台，成为我们的合伙人。我们的宗旨是：让自己省钱，在自己省钱的同时，可以与平台一起成长，一起共赢！</view>
     </view>
-    <view class="item" bindtap="getVIP2">
+    <!-- <view class="item" bindtap="getVIP2">
       <view class="content">
         <view class="left">
           <view class="discount">100元</view>
@@ -22,7 +22,7 @@
           <view class="name">中级代理</view>
         </view>
       </view>
-      <view class="info">中级介绍,中级介绍,中级介绍,中级介绍,中级介绍中级介绍中级介绍中级介绍,中级介绍,中级介绍,中级介绍</view>
-    </view>
+      <view class="info">感谢您对本平台的信赖和支持，更欢迎您加入本平台，成为我们的合伙人。我们的宗旨是：让自己省钱，在自己省钱的同时，可以与平台一起成长，一起共赢！</view>
+    </view> -->
   </scroll-view>
 </view>
